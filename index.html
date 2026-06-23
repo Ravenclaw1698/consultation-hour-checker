@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>BRACU CSE – Faculty Consultation Hours</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#2563eb;--primary-dark:#1d4ed8;--primary-light:#dbeafe;
+  --accent:#7c3aed;--surface:#fff;--bg:#f1f5f9;
+  --text:#0f172a;--muted:#64748b;--border:#e2e8f0;
+  --shadow:0 4px 24px rgba(37,99,235,.08);
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* ── HERO ── */
+.hero{
+  background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 50%,#7c3aed 100%);
+  padding:48px 24px 80px;text-align:center;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.15);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.25);border-radius:100px;
+  padding:5px 14px;font-size:.75rem;font-weight:600;color:#bfdbfe;
+  letter-spacing:.5px;text-transform:uppercase;margin-bottom:16px;
+}
+.hero h1{font-size:2rem;font-weight:700;color:#fff;line-height:1.2;margin-bottom:8px}
+.hero h1 span{
+  background:linear-gradient(90deg,#93c5fd,#c4b5fd);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero p{color:#bfdbfe;font-size:.95rem;font-weight:400}
+
+/* ── SEARCH CARD ── */
+.search-card{
+  max-width:680px;margin:-36px auto 0;padding:28px;
+  background:var(--surface);border-radius:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.12);position:relative;z-index:10;
+}
+.search-label{font-size:.8rem;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+.search-row{display:flex;gap:10px}
+.autocomplete-wrap{position:relative;flex:1}
+#search-input{
+  width:100%;padding:13px 16px;border:2px solid var(--border);border-radius:12px;
+  font-size:.95rem;font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s;
+  color:var(--text);background:#f8fafc;
+}
+#search-input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(37,99,235,.1);background:#fff}
+#search-btn{
+  padding:13px 24px;background:linear-gradient(135deg,var(--primary),var(--accent));
+  color:#fff;border:none;border-radius:12px;font-size:.95rem;font-weight:600;
+  font-family:inherit;cursor:pointer;white-space:nowrap;
+  transition:transform .15s,box-shadow .15s;
+  box-shadow:0 4px 14px rgba(37,99,235,.35);
+}
+#search-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,99,235,.45)}
+#search-btn:active{transform:translateY(0)}
+
+/* ── SUGGESTIONS ── */
+#suggestions{
+  position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:200;
+  background:#fff;border:2px solid var(--border);border-radius:14px;
+  box-shadow:0 12px 40px rgba(0,0,0,.12);max-height:280px;overflow-y:auto;display:none;
+}
+#suggestions li{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 16px;cursor:pointer;list-style:none;transition:background .12s;
+  border-bottom:1px solid #f1f5f9;
+}
+#suggestions li:last-child{border-bottom:none}
+#suggestions li:first-child{border-radius:12px 12px 0 0}
+#suggestions li:last-child{border-radius:0 0 12px 12px}
+#suggestions li:hover,.active-sug{background:#f8fafc}
+.sug-badge{
+  background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;
+  border-radius:7px;padding:3px 9px;font-size:.7rem;font-weight:700;letter-spacing:.5px;
+  flex-shrink:0;
+}
+.sug-name{font-size:.88rem;font-weight:500;color:var(--text);flex:1}
+.sug-desig{font-size:.75rem;color:var(--muted)}
+
+/* ── MAIN CONTAINER ── */
+.container{max-width:980px;margin:0 auto;padding:32px 20px 60px}
+
+/* ── STATUS ── */
+#status{
+  text-align:center;font-size:.88rem;color:var(--muted);margin:24px 0;min-height:1.5em;
+}
+#status.error{color:#dc2626}
+.spinner{
+  width:18px;height:18px;border:2.5px solid #dbeafe;border-top-color:var(--primary);
+  border-radius:50%;animation:spin .7s linear infinite;display:inline-block;
+  vertical-align:middle;margin-right:6px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── RESULT ── */
+#result{display:none;animation:fadeUp .35s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── FACULTY CARD ── */
+.faculty-card{background:var(--surface);border-radius:20px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--border)}
+.fac-header{
+  background:linear-gradient(135deg,#1e3a8a,#2563eb 60%,#7c3aed);
+  padding:24px 28px;display:flex;align-items:center;gap:20px;
+}
+.fac-avatar{
+  width:60px;height:60px;border-radius:14px;background:rgba(255,255,255,.18);
+  backdrop-filter:blur(8px);border:2px solid rgba(255,255,255,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;font-weight:800;color:#fff;letter-spacing:1px;flex-shrink:0;
+}
+.fac-info{flex:1}
+.fac-info h2{font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:4px}
+.fac-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.fac-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);
+  border-radius:100px;padding:3px 11px;font-size:.75rem;color:#bfdbfe;font-weight:500;
+}
+.fac-chip a{color:#bfdbfe;text-decoration:none}
+.fac-chip a:hover{color:#fff}
+
+/* ── TABLE SECTION ── */
+.table-section{padding:24px 28px}
+.section-title{font-size:.8rem;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.legend{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:16px;font-size:.78rem;color:var(--muted)}
+.legend-item{display:flex;align-items:center;gap:6px}
+.leg-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.leg-class{background:#fef3c7;border:1.5px solid #f59e0b}
+
+.schedule-wrap{overflow-x:auto;border-radius:14px;border:1.5px solid var(--border);-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;min-width:700px}
+thead th{
+  background:linear-gradient(180deg,#f8fafc,#f1f5f9);
+  color:var(--muted);font-size:.72rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;
+  padding:10px 8px;text-align:center;border-bottom:1.5px solid var(--border);
+  position:sticky;top:0;
+}
+thead th:first-child{text-align:left;padding-left:16px;min-width:100px;border-right:1.5px solid var(--border)}
+tbody tr{transition:background .12s}
+tbody tr:hover{background:#f8fafc}
+tbody td{
+  border-bottom:1px solid #f1f5f9;padding:9px 7px;
+  text-align:center;vertical-align:middle;
+}
+tbody tr:last-child td{border-bottom:none}
+tbody td:first-child{
+  font-size:.82rem;font-weight:600;color:var(--text);
+  text-align:left;padding-left:16px;background:#fafbfc;
+  border-right:1.5px solid var(--border);
+}
+.cell-class{
+  background:#fef3c7;color:#92400e;border:1px solid #fcd34d;
+  border-radius:8px;padding:4px 7px;font-size:.72rem;font-weight:500;
+  line-height:1.5;display:inline-block;max-width:120px;word-break:break-word;
+  transition:transform .12s,box-shadow .12s;cursor:default;
+}
+.cell-class:hover{transform:scale(1.05);box-shadow:0 4px 12px rgba(245,158,11,.25)}
+
+/* ── DIRECTORY ── */
+.dir-section{margin-top:40px}
+.dir-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+.dir-title{font-size:1.1rem;font-weight:700;color:var(--text)}
+.dir-subtitle{font-size:.82rem;color:var(--muted);margin-top:2px}
+.dir-filter{position:relative}
+.dir-filter input{
+  padding:8px 14px 8px 36px;border:2px solid var(--border);border-radius:10px;
+  font-size:.85rem;font-family:inherit;outline:none;width:220px;
+  transition:border-color .2s;color:var(--text);background:#f8fafc;
+}
+.dir-filter input:focus{border-color:var(--primary);background:#fff}
+.dir-filter .icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:.9rem;pointer-events:none}
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:20px}
+.tab-btn{
+  padding:8px 20px;font-size:.83rem;font-weight:600;cursor:pointer;
+  border:none;background:none;font-family:inherit;color:var(--muted);
+  border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s,border-color .15s;
+}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab-btn:hover:not(.active){color:var(--text)}
+.dir-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;
+}
+.fac-tile{
+  display:flex;align-items:center;gap:12px;padding:12px 14px;
+  background:var(--surface);border:1.5px solid var(--border);border-radius:12px;
+  cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s;
+}
+.fac-tile:hover{border-color:var(--primary);box-shadow:0 4px 16px rgba(37,99,235,.12);transform:translateY(-2px)}
+.tile-badge{
+  width:40px;height:40px;border-radius:9px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  display:flex;align-items:center;justify-content:center;
+  font-size:.65rem;font-weight:800;color:#fff;letter-spacing:.5px;text-align:center;line-height:1.2;
+}
+.tile-info{min-width:0}
+.tile-name{font-size:.82rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile-desig{font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.tile-room{font-size:.7rem;color:var(--primary);font-weight:600;margin-top:2px}
+.dir-empty{text-align:center;color:var(--muted);font-size:.88rem;padding:32px;grid-column:1/-1}
+.dir-count{font-size:.78rem;color:var(--muted);margin-bottom:14px}
+
+/* ── FOOTER ── */
+footer{
+  margin-top:60px;background:linear-gradient(135deg,#1e3a8a,#2563eb 60%,#7c3aed);
+  color:#fff;padding:36px 24px;
+}
+.footer-inner{
+  max-width:980px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;
+}
+.footer-left .footer-name{font-size:1rem;font-weight:700;letter-spacing:.2px}
+.footer-left .footer-uni{font-size:.82rem;color:#bfdbfe;margin-top:4px}
+.footer-left .footer-dept{font-size:.78rem;color:#93c5fd;margin-top:2px;font-weight:500}
+.footer-socials{display:flex;gap:12px}
+.social-link{
+  width:40px;height:40px;border-radius:10px;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s,transform .15s;color:#fff;text-decoration:none;
+}
+.social-link:hover{background:rgba(255,255,255,.25);transform:translateY(-3px)}
+.social-link svg{width:18px;height:18px;fill:#fff}
+.footer-divider{width:100%;height:1px;background:rgba(255,255,255,.12);margin:20px 0 12px}
+.footer-copy{font-size:.73rem;color:#93c5fd;text-align:center;width:100%}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(15,23,42,.55);backdrop-filter:blur(4px);
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:16px;padding-top:5vh;
+  overflow-y:auto;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-box{
+  background:#fff;border-radius:20px;width:100%;max-width:880px;
+  box-shadow:0 30px 80px rgba(0,0,0,.25);
+  transform:translateY(24px) scale(.97);transition:transform .25s;
+  position:relative;flex-shrink:0;
+}
+.modal-overlay.open .modal-box{transform:translateY(0) scale(1)}
+.modal-close{
+  position:absolute;top:14px;right:14px;
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.85);border:1px solid rgba(0,0,0,.1);
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:1rem;line-height:1;transition:background .15s;z-index:20;
+}
+.modal-close:hover{background:#fff}
+#modal-body{overflow:hidden}
+
+@media(max-width:600px){
+  .hero h1{font-size:1.4rem}
+  .search-card{margin:16px;border-radius:16px;padding:20px}
+  .search-row{flex-direction:column}
+  .fac-header{flex-direction:column;align-items:flex-start}
+  .dir-header{flex-direction:column;align-items:flex-start}
+  .dir-filter input{width:100%}
+  .dir-filter{width:100%}
+  .table-section{padding:12px}
+  .modal-box{border-radius:14px}
+  .modal-overlay{padding:10px;padding-top:3vh}
+  .fac-header{padding:16px}
+  .fac-avatar{width:48px;height:48px;font-size:.7rem}
+  thead th{font-size:.65rem;padding:7px 4px}
+  tbody td{padding:6px 4px;font-size:.75rem}
+  .cell-class{font-size:.68rem;padding:3px 4px}
+  .dir-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+  .fac-tile{padding:10px}
+  .tile-badge{width:34px;height:34px;font-size:.58rem}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">🎓 BRAC University CSE</div>
+  <h1>Faculty <span>Consultation Hours</span></h1>
+  <p>Search any faculty by initials or full name to view their weekly schedule</p>
+</div>
+
+<div class="search-card">
+  <div class="search-label">Search Faculty</div>
+  <div class="search-row">
+    <div class="autocomplete-wrap">
+      <input id="search-input" type="text" placeholder="e.g.  AAR  or  Annajiat Alim Rasel" autocomplete="off"/>
+      <ul id="suggestions"></ul>
+    </div>
+    <button id="search-btn">Search</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="dir-section" id="dir-section" style="display:none">
+    <div class="dir-header">
+      <div>
+        <div class="dir-title">👥 Faculty Directory</div>
+        <div class="dir-subtitle">Click any faculty to view their schedule</div>
+      </div>
+      <div class="dir-filter"><span class="icon">🔍</span><input id="dir-filter" type="text" placeholder="Filter faculty…"/></div>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="fulltime" id="tab-ft">Full Time</button>
+      <button class="tab-btn" data-tab="contractual" id="tab-ct">Contractual</button>
+    </div>
+    <div class="dir-count" id="dir-count"></div>
+    <div class="dir-grid" id="dir-grid"></div>
+  </div>
+  <div id="status">Loading faculty list…</div>
+</div>
+
+<!-- Schedule Modal -->
+<div class="modal-overlay" id="modal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <button class="modal-close" id="modal-close" title="Close">&#x2715;</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+const SHEET_ID='1uCpxARIPFmkhL1BdzCL5dXmxO5CbNbFkKrgOCmUM6cA';
+const TIME_SLOTS=['8:00 AM','9:30 AM','11:00 AM','12:30 PM','2:00 PM','3:30 PM','5:00 PM','6:00 PM','7:30 PM'];
+const DAYS=['Saturday','Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
+let facultyList=[],currentSug=[];
+
+function parseCSV(text){
+  const rows=[];let i=0,n=text.length;
+  while(i<n){
+    const row=[];
+    while(i<n&&text[i]!=='\n'){
+      if(text[i]==='"'){
+        i++;let cell='';
+        while(i<n){
+          if(text[i]==='"'&&text[i+1]==='"'){cell+='"';i+=2;}
+          else if(text[i]==='"'){i++;break;}
+          else cell+=text[i++];
+        }
+        row.push(cell);if(i<n&&text[i]===',')i++;
+      }else{
+        let cell='';
+        while(i<n&&text[i]!==','&&text[i]!=='\n')cell+=text[i++];
+        row.push(cell);if(i<n&&text[i]===',')i++;
+      }
+    }
+    if(i<n&&text[i]==='\n')i++;
+    if(row.length&&row.some(c=>c.trim()))rows.push(row);
+  }
+  return rows;
+}
+
+async function fetchSheet(name){
+  const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(name)}`;
+  const r=await fetch(url);
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  return parseCSV(await r.text());
+}
+
+let currentTab='fulltime';
+
+async function loadFacultyList(){
+  const $s=document.getElementById('status');
+  try{
+    const rows=await fetchSheet('FacultyList');
+    for(let i=1;i<rows.length;i++){
+      const r=rows[i];
+      if(r[1]&&r[2])facultyList.push({initial:r[1].trim(),name:r[2].trim(),designation:(r[3]||'').trim(),status:(r[4]||'').trim(),room:(r[5]||'').trim(),email:(r[6]||'').trim()});
+    }
+    $s.textContent=`${facultyList.length} faculty members loaded — start typing to search`;
+    renderDirectory();
+    document.getElementById('dir-section').style.display='block';
+  }catch(e){$s.textContent='Could not load faculty list. Check your internet connection.';$s.className='error';}
+}
+
+function renderDirectory(filterQ=''){
+  const grid=document.getElementById('dir-grid');
+  const count=document.getElementById('dir-count');
+  const q=filterQ.toLowerCase();
+  const isContractual=currentTab==='contractual';
+  let list=facultyList.filter(f=>{
+    const matchTab=isContractual?(f.status==='Contractual'):(f.status!=='Contractual');
+    if(!matchTab)return false;
+    if(!q)return true;
+    return f.initial.toLowerCase().includes(q)||f.name.toLowerCase().includes(q)||f.designation.toLowerCase().includes(q);
+  });
+  count.textContent=`${list.length} ${isContractual?'contractual':'full-time'} faculty member${list.length!==1?'s':''}${q?' matching "'+filterQ+'"':''}` ;
+  if(!list.length){grid.innerHTML='<div class="dir-empty">No faculty found</div>';return;}
+  grid.innerHTML=list.map(f=>`
+    <div class="fac-tile" onclick="tileClick('${f.initial.replace(/'/g,"\\'")}')"> 
+      <div class="tile-badge">${esc(f.initial)}</div>
+      <div class="tile-info">
+        <div class="tile-name">${esc(f.name)}</div>
+        <div class="tile-desig">${esc(f.designation)}</div>
+        ${f.room?`<div class="tile-room">🚪 ${esc(f.room)}</div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function tileClick(initial){
+  const f=facultyList.find(x=>x.initial===initial);
+  if(!f)return;
+  document.getElementById('search-input').value=f.name;
+  loadSchedule(f).then(()=>{
+    const $r=document.getElementById('result');
+    if($r)setTimeout(()=>$r.scrollIntoView({behavior:'smooth',block:'start'}),80);
+  });
+}
+
+document.getElementById('dir-filter').addEventListener('input',e=>renderDirectory(e.target.value.trim()));
+
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTab=btn.dataset.tab;
+    renderDirectory(document.getElementById('dir-filter').value.trim());
+  });
+});
+
+const $inp=document.getElementById('search-input');
+const $sug=document.getElementById('suggestions');
+let activeIdx=-1;
+
+function getSug(q){
+  if(!q)return[];const ql=q.toLowerCase();
+  return facultyList.filter(f=>f.initial.toLowerCase().startsWith(ql)||f.name.toLowerCase().includes(ql)).slice(0,10);
+}
+
+function showSug(list){
+  if(!list.length){$sug.style.display='none';return;}
+  $sug.innerHTML=list.map((f,i)=>`<li data-idx="${i}"><span class="sug-badge">${esc(f.initial)}</span><span class="sug-name">${esc(f.name)}</span><span class="sug-desig">${esc(f.designation)}</span></li>`).join('');
+  $sug.style.display='block';activeIdx=-1;
+}
+
+$inp.addEventListener('input',()=>{currentSug=getSug($inp.value.trim());showSug(currentSug);});
+
+$inp.addEventListener('keydown',e=>{
+  const items=$sug.querySelectorAll('li');
+  if(!items.length){if(e.key==='Enter')doSearch();return;}
+  if(e.key==='ArrowDown'){e.preventDefault();activeIdx=(activeIdx+1)%items.length;items.forEach((el,i)=>el.classList.toggle('active-sug',i===activeIdx));}
+  else if(e.key==='ArrowUp'){e.preventDefault();activeIdx=(activeIdx-1+items.length)%items.length;items.forEach((el,i)=>el.classList.toggle('active-sug',i===activeIdx));}
+  else if(e.key==='Enter'){e.preventDefault();activeIdx>=0&&currentSug[activeIdx]?selectFac(currentSug[activeIdx]):doSearch();}
+  else if(e.key==='Escape')$sug.style.display='none';
+});
+
+$sug.addEventListener('click',e=>{const li=e.target.closest('li');if(li)selectFac(currentSug[+li.dataset.idx]);});
+document.addEventListener('click',e=>{if(!e.target.closest('.autocomplete-wrap'))$sug.style.display='none';});
+
+function selectFac(f){$inp.value=f.name;$sug.style.display='none';loadSchedule(f);}
+
+document.getElementById('search-btn').addEventListener('click',doSearch);
+
+function doSearch(){
+  $sug.style.display='none';
+  const q=$inp.value.trim().toLowerCase();if(!q)return;
+  const found=facultyList.find(f=>f.initial.toLowerCase()===q||f.name.toLowerCase()===q)||
+              facultyList.find(f=>f.initial.toLowerCase().startsWith(q)||f.name.toLowerCase().includes(q));
+  if(found)loadSchedule(found);
+  else{document.getElementById('status').textContent=`No faculty found for "${$inp.value}"`;document.getElementById('status').className='error';}
+}
+
+function openModal(html){
+  document.getElementById('modal-body').innerHTML=html;
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('modal-close').addEventListener('click',closeModal);
+document.getElementById('modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+async function loadSchedule(faculty){
+  const $s=document.getElementById('status');
+  $s.innerHTML=`<span class="spinner"></span>Loading schedule for <strong>${esc(faculty.name)}</strong>…`;
+  $s.className='';
+  try{
+    const rows=await fetchSheet(faculty.initial);
+    openModal(buildCard(faculty,rows));
+    $s.textContent='';
+  }catch(e){
+    $s.textContent=`Could not load schedule for "${faculty.initial}".`;$s.className='error';
+  }
+  return true;
+}
+
+function buildCard(faculty,rows){
+  const dayData={};
+  for(const row of rows)if(DAYS.includes(row[0]))dayData[row[0]]=row.slice(1,10);
+  const usedCols=TIME_SLOTS.map((_,ci)=>DAYS.some(d=>dayData[d]&&(dayData[d][ci]||'').trim()));
+  const showCols=TIME_SLOTS.map((_,ci)=>ci<6||usedCols[ci]);
+
+  let thead=`<tr><th>Day</th>`;
+  TIME_SLOTS.forEach((t,ci)=>{if(showCols[ci])thead+=`<th>${t}</th>`;});
+  thead+=`</tr>`;
+
+  let tbody='';
+  for(const day of DAYS){
+    const cells=dayData[day]||Array(9).fill('');
+    tbody+=`<tr><td>${day}</td>`;
+    TIME_SLOTS.forEach((_,ci)=>{
+      if(!showCols[ci])return;
+      const raw=(cells[ci]||'').trim();
+      if(raw){
+        const parts=raw.split(',').map(p=>p.replace(/\n/g,' ').trim()).filter(Boolean);
+        tbody+=`<td><span class="cell-class">${parts.join('<br>')}</span></td>`;
+      }else tbody+=`<td></td>`;
+    });
+    tbody+=`</tr>`;
+  }
+
+  const initials=faculty.initial;
+  const emailChip=faculty.email?`<span class="fac-chip">✉️ <a href="mailto:${esc(faculty.email)}">${esc(faculty.email)}</a></span>`:'';
+  const roomChip=faculty.room?`<span class="fac-chip">🚪 Room ${esc(faculty.room)}</span>`:'';
+  const desigChip=faculty.designation?`<span class="fac-chip">🎓 ${esc(faculty.designation)}</span>`:'';
+
+  return `<div class="faculty-card">
+    <div class="fac-header">
+      <div class="fac-avatar">${esc(initials)}</div>
+      <div class="fac-info">
+        <h2>${esc(faculty.name)}</h2>
+        <div class="fac-meta">${desigChip}${roomChip}${emailChip}</div>
+      </div>
+    </div>
+    <div class="table-section">
+      <div class="section-title">Weekly Schedule</div>
+      <div class="legend">
+        <div class="legend-item"><div class="leg-dot leg-class"></div> Class assigned</div>
+      </div>
+      <div class="schedule-wrap">
+        <table><thead>${thead}</thead><tbody>${tbody}</tbody></table>
+      </div>
+    </div>
+  </div>`;
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+loadFacultyList();
+</script>
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="footer-name">Sabbir Ahmed Shishir</div>
+      <div class="footer-uni">BRAC University</div>
+      <div class="footer-dept">Computer Science</div>
+    </div>
+    <div class="footer-socials">
+      <a class="social-link" href="https://github.com/" target="_blank" title="GitHub" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      </a>
+      <a class="social-link" href="https://facebook.com/" target="_blank" title="Facebook" aria-label="Facebook">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      </a>
+      <a class="social-link" href="https://linkedin.com/" target="_blank" title="LinkedIn" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-copy">Built for BRACU CSE students · Data sourced from the official faculty planner</div>
+  </div>
+</footer>
+</body>
+</html>
