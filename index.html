@@ -8,41 +8,42 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --primary:#2563eb;--primary-dark:#1d4ed8;--primary-light:#dbeafe;
-  --accent:#7c3aed;--surface:#fff;--bg:#f1f5f9;
-  --text:#0f172a;--muted:#64748b;--border:#e2e8f0;
-  --shadow:0 4px 24px rgba(37,99,235,.08);
+  --primary:#3b82f6;--primary-dark:#1d4ed8;--primary-light:rgba(59,130,246,0.15);
+  --accent:#10b981;--surface:#27272a;--bg:#18181b;
+  --text:#f4f4f5;--muted:#a1a1aa;--border:#3f3f46;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+  --danger:#ef4444;--danger-light:rgba(239,68,68,0.15);
 }
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 
 /* ── HERO ── */
 .hero{
-  background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 50%,#7c3aed 100%);
+  background:linear-gradient(135deg,#111827 0%,#1e3a8a 50%,#065f62 100%);
   padding:48px 24px 80px;text-align:center;position:relative;overflow:hidden;
 }
 .hero::before{
   content:'';position:absolute;inset:0;
-  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 .hero-badge{
   display:inline-flex;align-items:center;gap:6px;
-  background:rgba(255,255,255,.15);backdrop-filter:blur(8px);
-  border:1px solid rgba(255,255,255,.25);border-radius:100px;
-  padding:5px 14px;font-size:.75rem;font-weight:600;color:#bfdbfe;
+  background:rgba(255,255,255,.08);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.15);border-radius:100px;
+  padding:5px 14px;font-size:.75rem;font-weight:600;color:#93c5fa;
   letter-spacing:.5px;text-transform:uppercase;margin-bottom:16px;
 }
 .hero h1{font-size:2rem;font-weight:700;color:#fff;line-height:1.2;margin-bottom:8px}
 .hero h1 span{
-  background:linear-gradient(90deg,#93c5fd,#c4b5fd);
+  background:linear-gradient(90deg,#93c5fd,#34d399);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
-.hero p{color:#bfdbfe;font-size:.95rem;font-weight:400}
+.hero p{color:#93c5fd;font-size:.95rem;font-weight:400}
 
 /* ── SEARCH CARD ── */
 .search-card{
-  max-width:680px;margin:-36px auto 0;padding:28px;
+  max-width:1100px;margin:-36px auto 0;padding:28px;
   background:var(--surface);border-radius:20px;
-  box-shadow:0 20px 60px rgba(0,0,0,.12);position:relative;z-index:10;
+  box-shadow:var(--shadow);border:1px solid var(--border);position:relative;z-index:10;
 }
 .search-label{font-size:.8rem;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
 .search-row{display:flex;gap:10px}
@@ -50,34 +51,34 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 #search-input{
   width:100%;padding:13px 16px;border:2px solid var(--border);border-radius:12px;
   font-size:.95rem;font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s;
-  color:var(--text);background:#f8fafc;
+  color:var(--text);background:#1c1c1f;
 }
-#search-input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(37,99,235,.1);background:#fff}
+#search-input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(59,130,246,.25);background:#27272a}
 #search-btn{
   padding:13px 24px;background:linear-gradient(135deg,var(--primary),var(--accent));
   color:#fff;border:none;border-radius:12px;font-size:.95rem;font-weight:600;
   font-family:inherit;cursor:pointer;white-space:nowrap;
   transition:transform .15s,box-shadow .15s;
-  box-shadow:0 4px 14px rgba(37,99,235,.35);
+  box-shadow:0 4px 14px rgba(59,130,246,.25);
 }
-#search-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,99,235,.45)}
+#search-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,.35)}
 #search-btn:active{transform:translateY(0)}
 
 /* ── SUGGESTIONS ── */
 #suggestions{
   position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:200;
-  background:#fff;border:2px solid var(--border);border-radius:14px;
-  box-shadow:0 12px 40px rgba(0,0,0,.12);max-height:280px;overflow-y:auto;display:none;
+  background:var(--surface);border:2px solid var(--border);border-radius:14px;
+  box-shadow:var(--shadow);max-height:280px;overflow-y:auto;display:none;
 }
 #suggestions li{
   display:flex;align-items:center;gap:10px;
   padding:11px 16px;cursor:pointer;list-style:none;transition:background .12s;
-  border-bottom:1px solid #f1f5f9;
+  border-bottom:1px solid var(--border);
 }
 #suggestions li:last-child{border-bottom:none}
 #suggestions li:first-child{border-radius:12px 12px 0 0}
 #suggestions li:last-child{border-radius:0 0 12px 12px}
-#suggestions li:hover,.active-sug{background:#f8fafc}
+#suggestions li:hover,.active-sug{background:rgba(255,255,255,0.05)}
 .sug-badge{
   background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;
   border-radius:7px;padding:3px 9px;font-size:.7rem;font-weight:700;letter-spacing:.5px;
@@ -87,7 +88,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .sug-desig{font-size:.75rem;color:var(--muted)}
 
 /* ── MAIN CONTAINER ── */
-.container{max-width:980px;margin:0 auto;padding:32px 20px 60px}
+.container{max-width:100%;margin:0;padding:32px 40px 60px}
 
 /* ── STATUS ── */
 #status{
@@ -108,7 +109,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 /* ── FACULTY CARD ── */
 .faculty-card{background:var(--surface);border-radius:20px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--border)}
 .fac-header{
-  background:linear-gradient(135deg,#1e3a8a,#2563eb 60%,#7c3aed);
+  background:linear-gradient(135deg,#1e3a8a,#2563eb 60%,#10b981);
   padding:24px 28px;display:flex;align-items:center;gap:20px;
 }
 .fac-avatar{
@@ -116,16 +117,17 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   backdrop-filter:blur(8px);border:2px solid rgba(255,255,255,.3);
   display:flex;align-items:center;justify-content:center;
   font-size:1rem;font-weight:800;color:#fff;letter-spacing:1px;flex-shrink:0;
+  overflow:hidden;
 }
 .fac-info{flex:1}
 .fac-info h2{font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:4px}
 .fac-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
 .fac-chip{
   display:inline-flex;align-items:center;gap:5px;
-  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);
-  border-radius:100px;padding:3px 11px;font-size:.75rem;color:#bfdbfe;font-weight:500;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:100px;padding:3px 11px;font-size:.75rem;color:#93c5fa;font-weight:500;
 }
-.fac-chip a{color:#bfdbfe;text-decoration:none}
+.fac-chip a{color:#93c5fa;text-decoration:none}
 .fac-chip a:hover{color:#fff}
 
 /* ── TABLE SECTION ── */
@@ -135,37 +137,52 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 
 .legend{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:16px;font-size:.78rem;color:var(--muted)}
 .legend-item{display:flex;align-items:center;gap:6px}
-.leg-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
-.leg-class{background:#fef3c7;border:1.5px solid #f59e0b}
+.leg-class{background:#3f3f46;border:1.5px solid #52525b}
+.leg-consultation{background:rgba(16,185,129,0.15);border:1.5px solid #34d399}
+.leg-research{background:rgba(59,130,246,0.15);border:1.5px solid #60a5fa}
 
 .schedule-wrap{overflow-x:auto;border-radius:14px;border:1.5px solid var(--border);-webkit-overflow-scrolling:touch}
 table{width:100%;border-collapse:collapse;min-width:700px}
 thead th{
-  background:linear-gradient(180deg,#f8fafc,#f1f5f9);
+  background:#1f1f23;
   color:var(--muted);font-size:.72rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;
   padding:10px 8px;text-align:center;border-bottom:1.5px solid var(--border);
   position:sticky;top:0;
 }
 thead th:first-child{text-align:left;padding-left:16px;min-width:100px;border-right:1.5px solid var(--border)}
 tbody tr{transition:background .12s}
-tbody tr:hover{background:#f8fafc}
+tbody tr:hover{background:rgba(255,255,255,0.02)}
 tbody td{
-  border-bottom:1px solid #f1f5f9;padding:9px 7px;
+  border-bottom:1px solid var(--border);padding:9px 7px;
   text-align:center;vertical-align:middle;
 }
 tbody tr:last-child td{border-bottom:none}
 tbody td:first-child{
   font-size:.82rem;font-weight:600;color:var(--text);
-  text-align:left;padding-left:16px;background:#fafbfc;
+  text-align:left;padding-left:16px;background:#1c1c1f;
   border-right:1.5px solid var(--border);
 }
 .cell-class{
-  background:#fef3c7;color:#92400e;border:1px solid #fcd34d;
+  background:#3f3f46;color:#fafafa;border:1px solid #52525b;
   border-radius:8px;padding:4px 7px;font-size:.72rem;font-weight:500;
   line-height:1.5;display:inline-block;max-width:120px;word-break:break-word;
   transition:transform .12s,box-shadow .12s;cursor:default;
 }
-.cell-class:hover{transform:scale(1.05);box-shadow:0 4px 12px rgba(245,158,11,.25)}
+.cell-class:hover{transform:scale(1.05);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.cell-consultation{
+  background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.3);
+  border-radius:8px;padding:4px 7px;font-size:.72rem;font-weight:500;
+  line-height:1.5;display:inline-block;max-width:120px;word-break:break-word;
+  transition:transform .12s,box-shadow .12s;cursor:default;
+}
+.cell-consultation:hover{transform:scale(1.05);box-shadow:0 4px 12px rgba(16,185,129,.2)}
+.cell-research{
+  background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.3);
+  border-radius:8px;padding:4px 7px;font-size:.72rem;font-weight:500;
+  line-height:1.5;display:inline-block;max-width:120px;word-break:break-word;
+  transition:transform .12s,box-shadow .12s;cursor:default;
+}
+.cell-research:hover{transform:scale(1.05);box-shadow:0 4px 12px rgba(59,130,246,.2)}
 
 /* ── DIRECTORY ── */
 .dir-section{margin-top:40px}
@@ -176,9 +193,9 @@ tbody td:first-child{
 .dir-filter input{
   padding:8px 14px 8px 36px;border:2px solid var(--border);border-radius:10px;
   font-size:.85rem;font-family:inherit;outline:none;width:220px;
-  transition:border-color .2s;color:var(--text);background:#f8fafc;
+  transition:border-color .2s;color:var(--text);background:#1c1c1f;
 }
-.dir-filter input:focus{border-color:var(--primary);background:#fff}
+.dir-filter input:focus{border-color:var(--primary);background:#27272a}
 .dir-filter .icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:.9rem;pointer-events:none}
 .tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:20px}
 .tab-btn{
@@ -189,7 +206,7 @@ tbody td:first-child{
 .tab-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
 .tab-btn:hover:not(.active){color:var(--text)}
 .dir-grid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;
 }
 .fac-tile{
   display:flex;align-items:center;gap:12px;padding:12px 14px;
@@ -198,25 +215,26 @@ tbody td:first-child{
 }
 .fac-tile:hover{border-color:var(--primary);box-shadow:0 4px 16px rgba(37,99,235,.12);transform:translateY(-2px)}
 .tile-badge{
-  width:40px;height:40px;border-radius:9px;flex-shrink:0;
+  width:44px;height:44px;border-radius:8px;flex-shrink:0;
   background:linear-gradient(135deg,var(--primary),var(--accent));
   display:flex;align-items:center;justify-content:center;
-  font-size:.65rem;font-weight:800;color:#fff;letter-spacing:.5px;text-align:center;line-height:1.2;
+  font-size:.7rem;font-weight:800;color:#fff;letter-spacing:.3px;text-align:center;line-height:1.1;
+  overflow:hidden;
 }
 .tile-info{min-width:0}
-.tile-name{font-size:.82rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tile-desig{font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.tile-name{font-size:.88rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile-desig{font-size:.75rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
 .tile-room{font-size:.7rem;color:var(--primary);font-weight:600;margin-top:2px}
-.dir-empty{text-align:center;color:var(--muted);font-size:.88rem;padding:32px;grid-column:1/-1}
-.dir-count{font-size:.78rem;color:var(--muted);margin-bottom:14px}
+.dir-empty{text-align:center;color:var(--muted);font-size:.8rem;padding:24px;grid-column:1/-1}
+.dir-count{font-size:.78rem;color:var(--muted);margin-bottom:12px}
 
 /* ── FOOTER ── */
 footer{
-  margin-top:60px;background:linear-gradient(135deg,#1e3a8a,#2563eb 60%,#7c3aed);
+  margin-top:60px;background:linear-gradient(135deg,#111827,#1e3a8a 60%,#065f62);
   color:#fff;padding:36px 24px;
 }
 .footer-inner{
-  max-width:980px;margin:0 auto;
+  max-width:100%;margin:0 16px;
   display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;
 }
 .footer-left .footer-name{font-size:1rem;font-weight:700;letter-spacing:.2px}
@@ -237,7 +255,7 @@ footer{
 /* ── MODAL ── */
 .modal-overlay{
   position:fixed;inset:0;z-index:1000;
-  background:rgba(15,23,42,.55);backdrop-filter:blur(4px);
+  background:rgba(0,0,0,.65);backdrop-filter:blur(4px);
   display:flex;align-items:flex-start;justify-content:center;
   padding:16px;padding-top:5vh;
   overflow-y:auto;
@@ -245,8 +263,8 @@ footer{
 }
 .modal-overlay.open{opacity:1;pointer-events:all}
 .modal-box{
-  background:#fff;border-radius:20px;width:100%;max-width:880px;
-  box-shadow:0 30px 80px rgba(0,0,0,.25);
+  background:var(--surface);border-radius:20px;width:100%;max-width:880px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
   transform:translateY(24px) scale(.97);transition:transform .25s;
   position:relative;flex-shrink:0;
 }
@@ -254,12 +272,13 @@ footer{
 .modal-close{
   position:absolute;top:14px;right:14px;
   width:32px;height:32px;border-radius:50%;
-  background:rgba(255,255,255,.85);border:1px solid rgba(0,0,0,.1);
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);
   box-shadow:0 2px 8px rgba(0,0,0,.12);
   cursor:pointer;display:flex;align-items:center;justify-content:center;
   font-size:1rem;line-height:1;transition:background .15s;z-index:20;
+  color:var(--text);
 }
-.modal-close:hover{background:#fff}
+.modal-close:hover{background:#fee2e2;color:#ef4444}
 #modal-body{overflow:hidden}
 
 @media(max-width:600px){
@@ -278,13 +297,91 @@ footer{
   thead th{font-size:.65rem;padding:7px 4px}
   tbody td{padding:6px 4px;font-size:.75rem}
   .cell-class{font-size:.68rem;padding:3px 4px}
-  .dir-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
-  .fac-tile{padding:10px}
-  .tile-badge{width:34px;height:34px;font-size:.58rem}
+  .dir-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+  .fac-tile{padding:8px 10px;gap:10px;border-radius:10px}
+  .tile-badge{width:36px;height:36px;font-size:.65rem;border-radius:6px}
+}
+/* ── SIDEBAR NAVIGATION ── */
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:240px;
+  background:var(--surface);border-right:1px solid var(--border);
+  z-index:900;padding:32px 16px;display:flex;flex-direction:column;
+  transition:transform .3s ease;
+}
+.sidebar-nav{display:flex;flex-direction:column;gap:8px}
+.sidebar-link{
+  display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;
+  font-size:.9rem;font-weight:600;color:var(--muted);text-decoration:none;transition:all .2s;
+}
+.sidebar-link:hover{color:var(--text);background:rgba(15,23,42,.04)}
+.sidebar-link.active{color:var(--primary);background:var(--primary-light)}
+.sidebar-link .nav-icon{font-size:1.1rem}
+
+.sidebar-toggle{
+  display:flex;position:fixed;top:16px;left:256px;z-index:1000;
+  width:40px;height:40px;border-radius:10px;background:var(--surface);
+  border:1.5px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.08);
+  cursor:pointer;flex-direction:column;justify-content:center;align-items:center;gap:4px;padding:0;
+  transition:left .3s ease, transform .2s;
+}
+.sidebar-toggle span{display:block;width:18px;height:2px;background:var(--text);border-radius:2px;transition:transform .2s,opacity .2s}
+
+/* Collapsed state on desktop */
+.sidebar-collapsed .sidebar{transform:translateX(-100%)}
+.sidebar-collapsed .main-wrapper-layout{padding-left:0}
+.sidebar-collapsed .sidebar-toggle{left:16px}
+
+/* Hamburger animations (primarily mobile when open) */
+.sidebar-toggle.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.sidebar-toggle.open span:nth-child(2){opacity:0}
+.sidebar-toggle.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+
+.sidebar-overlay{
+  display:none;position:fixed;inset:0;background:rgba(15,23,42,.3);
+  backdrop-filter:blur(4px);z-index:850;opacity:0;transition:opacity .3s ease;pointer-events:none;
+}
+.sidebar-overlay.show{opacity:1;pointer-events:all}
+
+.main-wrapper-layout{
+  padding-left:240px;min-height:100vh;display:flex;flex-direction:column;justify-content:space-between;
+  transition:padding-left .3s ease;
+}
+
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);box-shadow:24px 0 80px rgba(0,0,0,.15)}
+  .sidebar-toggle{left:16px}
+  .main-wrapper-layout{padding-left:0}
+  
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-toggle.open{left:256px}
+  .sidebar-overlay{display:block}
 }
 </style>
 </head>
 <body>
+
+<button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle Menu">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<aside class="sidebar" id="sidebar">
+  <nav class="sidebar-nav">
+    <a href="index.html" class="sidebar-link active">
+      <span class="nav-icon">📅</span>
+      <span class="nav-text">Consultation Hour</span>
+    </a>
+    <a href="electives.html" class="sidebar-link">
+      <span class="nav-icon">📚</span>
+      <span class="nav-text">Elective List</span>
+    </a>
+  </nav>
+</aside>
+
+<div class="main-wrapper-layout">
 
 <div class="hero">
   <div class="hero-badge">🎓 BRAC University CSE</div>
@@ -332,7 +429,223 @@ footer{
 
 <script>
 const SHEET_ID='1uCpxARIPFmkhL1BdzCL5dXmxO5CbNbFkKrgOCmUM6cA';
-const TIME_SLOTS=['8:00 AM','9:30 AM','11:00 AM','12:30 PM','2:00 PM','3:30 PM','5:00 PM','6:00 PM','7:30 PM'];
+const FACULTY_PICS = {
+  "MAM": "https://cse.sds.bracu.ac.bd/storage/media/176/conversions/Dr.-Mahbubul-Alam-Majumdar-CSE-thumb.jpg",
+  "SKZ": "https://cse.sds.bracu.ac.bd/storage/media/173/conversions/Sadia-Hamid-Kazi-thumb.jpeg",
+  "KYK": "https://cse.sds.bracu.ac.bd/storage/media/175/conversions/Professor-Kaykobad-thumb.png",
+  "CMR": "https://cse.sds.bracu.ac.bd/storage/media/787/conversions/cmr_oct24-thumb.JPG",
+  "MSA": "https://cse.sds.bracu.ac.bd/storage/media/177/conversions/Mr.-Matin-Saad-Abdullah_0-thumb.jpg",
+  "KHR": "https://cse.sds.bracu.ac.bd/storage/media/180/conversions/Dr.-Md.-Khalilur-Rhaman-thumb.jpg",
+  "GRA": "https://cse.sds.bracu.ac.bd/storage/media/179/conversions/Md.-Golam-Rabiul-Alam-CSE-thumb.jpg",
+  "SDF": "https://cse.sds.bracu.ac.bd/storage/media/127/conversions/MSFerdousNew-thumb.jpeg",
+  "ACH": "https://cse.sds.bracu.ac.bd/storage/media/171/conversions/amitabhaSir-thumb.jpg",
+  "FDC": "https://cse.sds.bracu.ac.bd/storage/media/507/conversions/FC-thumb.jpeg",
+  "SWK": "https://cse.sds.bracu.ac.bd/storage/media/668/conversions/13445786_10154162965585903_634604791187830693_n-thumb.jpg",
+  "TLQ": "https://cse.sds.bracu.ac.bd/storage/media/489/conversions/haquesmtaiabul-0151-thumb.jpg",
+  "AMK": "https://cse.sds.bracu.ac.bd/storage/media/428/conversions/AbuKhan-200dpi-thumb.jpg",
+  "MNY": "https://cse.sds.bracu.ac.bd/storage/media/238/conversions/Yan-Profile-Picture-thumb.jpg",
+  "ASA": "https://cse.sds.bracu.ac.bd/storage/media/220/conversions/Photo_shimul-(2)-thumb.jpg",
+  "MIH": "https://cse.sds.bracu.ac.bd/storage/media/945/conversions/Iqbal_CSE-2-thumb.png",
+  "FYS": "https://cse.sds.bracu.ac.bd/storage/media/251/conversions/pic1-thumb.jpeg",
+  "MSAH": "https://cse.sds.bracu.ac.bd/storage/media/899/conversions/MSAH-thumb.png",
+  "AQZ": "https://cse.sds.bracu.ac.bd/storage/media/438/conversions/IMG_5420-thumb.jpeg",
+  "AAR": "https://cse.sds.bracu.ac.bd/storage/media/167/conversions/Annajiat-Alim-Rasel-for-bucse-v4-thumb.jpg",
+  "AKTD": "https://cse.sds.bracu.ac.bd/storage/media/885/conversions/resized_adnan_photo_1050x1400-thumb.jpg",
+  "MSI": "https://cse.sds.bracu.ac.bd/storage/media/677/conversions/WhatsApp-Image-2024-08-19-at-7.59.02-PM-thumb.jpeg",
+  "TAW": "https://cse.sds.bracu.ac.bd/storage/media/227/conversions/Tawhid_Outer_bucse-v4-thumb.jpg",
+  "IBA": "https://cse.sds.bracu.ac.bd/storage/media/418/conversions/Md.-Imran-Bin-Azad-thumb.jpg",
+  "NNC": "https://cse.sds.bracu.ac.bd/storage/media/463/conversions/NNC_7407_2-thumb.jpg",
+  "MAHR": "https://cse.sds.bracu.ac.bd/storage/media/1052/conversions/IMG-20250813-WA0011-(1)-thumb.jpg",
+  "TRZ": "https://cse.sds.bracu.ac.bd/storage/media/437/conversions/308317759_805269880594504_5614694467692864607_n-thumb.jpg",
+  "TNMF": "https://cse.sds.bracu.ac.bd/storage/media/806/conversions/Tasnim.Ferdous-thumb.jpeg",
+  "DZK": "https://cse.sds.bracu.ac.bd/storage/media/142/conversions/Dewan-Ziaul-Karim-CSE-thumb.jpg",
+  "ARF": "https://cse.sds.bracu.ac.bd/storage/media/12/conversions/185544241_10222657419097685_8218596358068594256_n-thumb.jpg",
+  "RRH": "https://cse.sds.bracu.ac.bd/storage/media/814/conversions/20240920_215240_Original_Original-thumb.jpeg",
+  "SDQ": "https://cse.sds.bracu.ac.bd/storage/media/493/conversions/81586264_2679374838806240_2920960876657770496_n-thumb.jpg",
+  "NZRF": "https://cse.sds.bracu.ac.bd/storage/media/852/conversions/WhatsApp-Image-2025-03-29-at-10.30.46-PM-thumb.jpeg",
+  "AQU": "https://cse.sds.bracu.ac.bd/storage/media/1046/conversions/AmbientBliss-01100-thumb.jpg",
+  "SBB": "https://cse.sds.bracu.ac.bd/storage/media/849/conversions/Md.-Sabbir-Ahmed_SDS11-thumb.png",
+  "MAHS": "https://cse.sds.bracu.ac.bd/storage/media/1053/conversions/BRACU-thumb.jpg",
+  "ASRF": "https://cse.sds.bracu.ac.bd/storage/media/1089/conversions/Shanto_cropped-thumb.png",
+  "MVH": "https://cse.sds.bracu.ac.bd/storage/media/1056/conversions/Photo-of-Naveed-thumb.jpg",
+  "RKBR": "https://cse.sds.bracu.ac.bd/storage/media/1049/conversions/20260323_173030-(1)-(1)-thumb.jpg",
+  "SKIB": "https://cse.sds.bracu.ac.bd/storage/media/1035/conversions/WhatsApp-Image-2026-01-07-at-12.01.03-AM-(1)-thumb.jpeg",
+  "WHMJ": "https://cse.sds.bracu.ac.bd/storage/media/1072/conversions/WhatsApp-Image-2026-06-10-at-9.56.07-PM-thumb.jpeg",
+  "DPU": "https://cse.sds.bracu.ac.bd/storage/media/862/conversions/DPU_v3__-thumb.png",
+  "SMUR": "https://cse.sds.bracu.ac.bd/storage/media/1057/conversions/1000181921-thumb.jpg",
+  "ADU": "https://cse.sds.bracu.ac.bd/storage/media/527/conversions/received_804100854892030-thumb.jpeg",
+  "BIJS": "https://cse.sds.bracu.ac.bd/storage/media/896/conversions/photo-thumb.png",
+  "AFA": "https://cse.sds.bracu.ac.bd/storage/media/910/conversions/IMG_4432-thumb.jpeg",
+  "SVKG": "https://cse.sds.bracu.ac.bd/storage/media/942/conversions/avatar-thumb.JPG",
+  "NAFR": "https://cse.sds.bracu.ac.bd/storage/media/931/conversions/Picsart_25-07-16_11-31-45-661~2-thumb.jpg",
+  "ARPD": "https://cse.sds.bracu.ac.bd/storage/media/988/conversions/unnamed-thumb.jpg",
+  "ITTS": "https://cse.sds.bracu.ac.bd/storage/media/989/conversions/DSCF4218-(1)-(2)-thumb.jpg",
+  "AHF": "https://cse.sds.bracu.ac.bd/storage/media/716/conversions/Pic-4-removebg4-thumb.png",
+  "SOSB": "https://cse.sds.bracu.ac.bd/storage/media/1060/conversions/now11-thumb.jpg",
+  "AHU": "https://cse.sds.bracu.ac.bd/storage/media/213/conversions/1686895519433-thumb.png",
+  "AIB": "https://cse.sds.bracu.ac.bd/storage/media/490/conversions/sds_photo-(2)-thumb.png",
+  "AJA": "https://cse.sds.bracu.ac.bd/storage/media/242/conversions/IMG_8412-thumb.JPG",
+  "ANK": "https://cse.sds.bracu.ac.bd/storage/media/130/conversions/Latest-2023-thumb.jpg",
+  "APM": "https://cse.sds.bracu.ac.bd/storage/media/692/conversions/fil-thumb.jpeg",
+  "AQT": "https://cse.sds.bracu.ac.bd/storage/media/957/conversions/cropped-IMG_2305-(1)-(1)-thumb.jpg",
+  "ARD": "https://cse.sds.bracu.ac.bd/storage/media/848/conversions/Ayman_1050x1400-thumb.jpg",
+  "ART": "https://cse.sds.bracu.ac.bd/storage/media/1012/conversions/me_convo_pic-min2-3-4-zoom-(1)-thumb.jpg",
+  "ATY": "https://cse.sds.bracu.ac.bd/storage/media/935/conversions/IMG_3805-thumb.jpeg",
+  "FBAW": "https://cse.sds.bracu.ac.bd/storage/media/964/conversions/Faria-thumb.jpg",
+  "AVB": "https://cse.sds.bracu.ac.bd/storage/media/696/conversions/FacultyProfilePhoto-AVB-thumb.png",
+  "AYO": "https://cse.sds.bracu.ac.bd/storage/media/552/conversions/imgonline-com-ua-resize-fWlmYOhL17-thumb.jpg",
+  "DFD": "https://cse.sds.bracu.ac.bd/storage/media/123/conversions/9bca0dcd-4cb4-4758-9e69-72c4bcd18a67-thumb.jpg",
+  "EHD": "https://cse.sds.bracu.ac.bd/storage/media/730/conversions/file-thumb.jpg",
+  "EHQ": "https://cse.sds.bracu.ac.bd/storage/media/866/conversions/Ehtashamul-Haque-Rescaled-thumb.jpg",
+  "FFR": "https://cse.sds.bracu.ac.bd/storage/media/725/conversions/382716541_1365837747636263_76914-thumb.jpg",
+  "FGZ": "https://cse.sds.bracu.ac.bd/storage/media/67/conversions/dsc_3481-copyjpg-thumb.jpg",
+  "FIC": "https://cse.sds.bracu.ac.bd/storage/media/776/conversions/0eb23ec3-028e-4358-ba23-a76b6e858614-thumb.jpeg",
+  "FZN": "https://cse.sds.bracu.ac.bd/storage/media/433/conversions/329894012_749135083212678_3162509178516727319_n-thumb.jpg",
+  "HFN": "https://cse.sds.bracu.ac.bd/storage/media/427/conversions/IMG_20230203_001102_309-thumb.jpg",
+  "LRK": "https://cse.sds.bracu.ac.bd/storage/media/920/conversions/lara_pp-thumb.jpeg",
+  "MAJI": "https://cse.sds.bracu.ac.bd/storage/media/906/conversions/PIC-thumb.jpg",
+  "HMH": "https://cse.sds.bracu.ac.bd/storage/media/1048/conversions/IMG_1241-thumb.jpeg",
+  "IBU": "https://cse.sds.bracu.ac.bd/storage/media/457/conversions/PXL_20230219_123143459-thumb.jpg",
+  "UTKR": "https://cse.sds.bracu.ac.bd/storage/media/923/conversions/profile_pic-thumb.jpg",
+  "FARS": "https://cse.sds.bracu.ac.bd/storage/media/912/conversions/Ahmad-Farhan-Shahriar-Chowdhury-thumb.jpg",
+  "NAHC": "https://cse.sds.bracu.ac.bd/storage/media/450/conversions/resizedAgain-thumb.jpg",
+  "ZLNM": "https://cse.sds.bracu.ac.bd/storage/media/911/conversions/me-thumb.jpg",
+  "KKS": "https://cse.sds.bracu.ac.bd/storage/media/269/conversions/kks-thumb.png",
+  "KFP": "https://cse.sds.bracu.ac.bd/storage/media/690/conversions/Kaniz_Fatema_Supti-thumb.jpg",
+  "KKP": "https://cse.sds.bracu.ac.bd/storage/media/799/conversions/photo_2024-11-26_20-27-29-(2)-thumb.jpg",
+  "KZMN": "https://cse.sds.bracu.ac.bd/storage/media/918/conversions/PXL_20240203_053807508.PORTRAIT-01-(1)-thumb.jpeg",
+  "MBM": "https://cse.sds.bracu.ac.bd/storage/media/889/conversions/rsz_180a1241-thumb.jpg",
+  "MDF": "https://cse.sds.bracu.ac.bd/storage/media/216/conversions/20220521_134912-thumb.jpg",
+  "MHDE": "https://cse.sds.bracu.ac.bd/storage/media/1022/conversions/MHDE-thumb.jpg",
+  "ALB": "https://cse.sds.bracu.ac.bd/storage/media/1025/conversions/1000017084-thumb.jpg",
+  "MNP": "https://cse.sds.bracu.ac.bd/storage/media/448/conversions/Screenshot-2023-12-10-202450-thumb.png",
+  "MNW": "https://cse.sds.bracu.ac.bd/storage/media/653/conversions/338169091_1352561268856342_7527722953256633615_n-thumb.jpg",
+  "MOM": "https://cse.sds.bracu.ac.bd/storage/media/941/conversions/1_1-(1)-thumb.jpg",
+  "MSMA": "https://cse.sds.bracu.ac.bd/storage/media/646/conversions/IMG_1846.HEIC~222-thumb.jpg",
+  "MUNR": "https://cse.sds.bracu.ac.bd/storage/media/864/conversions/180A0987-2-thumb.jpg",
+  "NFK": "https://cse.sds.bracu.ac.bd/storage/media/722/conversions/dark-grey-background-designify-thumb.png",
+  "NLH": "https://cse.sds.bracu.ac.bd/storage/media/886/conversions/23341028_CS_Niloy_Farhan-Lite-thumb.jpg",
+  "PBK": "https://cse.sds.bracu.ac.bd/storage/media/19/conversions/partha1-thumb.jpg",
+  "PDS": "https://cse.sds.bracu.ac.bd/storage/media/250/conversions/6227vh7r-thumb.png",
+  "PMD": "https://cse.sds.bracu.ac.bd/storage/media/685/conversions/Screenshot-2024-09-13-182747-thumb.png",
+  "NARC": "https://cse.sds.bracu.ac.bd/storage/media/987/conversions/rsz_download-(1)-thumb.png",
+  "PSMD": "https://cse.sds.bracu.ac.bd/storage/media/997/conversions/504609703_4165840810359886_788074703011464452_n-thumb.jpg",
+  "QUZA": "https://cse.sds.bracu.ac.bd/storage/media/29/conversions/Picture_Quazi-Ashikur-Rahman-thumb.jpeg",
+  "RAS": "https://cse.sds.bracu.ac.bd/storage/media/762/conversions/1730578041803-thumb.jpg",
+  "RBR": "https://cse.sds.bracu.ac.bd/storage/media/953/conversions/Generated-Image-October-02,-2025---12_39PM-thumb.png",
+  "RDW": "https://cse.sds.bracu.ac.bd/storage/media/877/conversions/1000031513-thumb.jpg",
+  "RKBM": "https://cse.sds.bracu.ac.bd/storage/media/667/conversions/IMG_0070-(3)-thumb.jpg",
+  "RFF": "https://cse.sds.bracu.ac.bd/storage/media/703/conversions/1-thumb.jpg",
+  "RKN": "https://cse.sds.bracu.ac.bd/storage/media/274/conversions/312093072_867632590914261_3932538558675141993_n-thumb.jpg",
+  "RSS": "https://cse.sds.bracu.ac.bd/storage/media/847/conversions/PassportPhoto-thumb.png",
+  "RFTS": "https://cse.sds.bracu.ac.bd/storage/media/771/conversions/WhatsApp-Image-2024-11-07-at-12.-thumb.jpg",
+  "SADA": "https://cse.sds.bracu.ac.bd/storage/media/972/conversions/profile-pic-thumb.png",
+  "SADF": "https://cse.sds.bracu.ac.bd/storage/media/649/conversions/937a9ad5-1bf8-4e4a-a227-5a855822f1b0-thumb.jpeg",
+  "SBDK": "https://cse.sds.bracu.ac.bd/storage/media/723/conversions/prof_pic2-thumb.jpg",
+  "FFU": "https://cse.sds.bracu.ac.bd/storage/media/836/conversions/DP-thumb.jpg",
+  "SDL": "https://cse.sds.bracu.ac.bd/storage/media/1075/conversions/20260606_210914_2-thumb.jpg",
+  "SBHN": "https://cse.sds.bracu.ac.bd/storage/media/992/conversions/SDS-Cover-thumb.jpg",
+  "NFMK": "https://cse.sds.bracu.ac.bd/storage/media/726/conversions/saif-image-thumb.jpg",
+  "SDU": "https://cse.sds.bracu.ac.bd/storage/media/750/conversions/D-155641-thumb.jpg",
+  "SHAH": "https://cse.sds.bracu.ac.bd/storage/media/1000/conversions/asif_pro-thumb.jpg",
+  "SHDM": "https://cse.sds.bracu.ac.bd/storage/media/757/conversions/5f404e4d-d696-4842-b801-6056d06b8b8a-thumb.jpg",
+  "SHRR": "https://cse.sds.bracu.ac.bd/storage/media/1036/conversions/desktop-wallpaper-black-high-resolution-14-solid-black-thumb.jpg",
+  "SHBK": "https://cse.sds.bracu.ac.bd/storage/media/423/conversions/yyy-(3)-thumb.jpg",
+  "NHBN": "https://cse.sds.bracu.ac.bd/storage/media/637/conversions/336744374_514804413963944_5825842436358764757_n-thumb.jpg",
+  "SRU": "https://cse.sds.bracu.ac.bd/storage/media/219/conversions/25994597_10214926721943019_7809588416887260573_n-thumb.jpg",
+  "SUE": "https://cse.sds.bracu.ac.bd/storage/media/456/conversions/Snapchat-1636393159-(1)-thumb.jpg",
+  "SULT": "https://cse.sds.bracu.ac.bd/storage/media/702/conversions/1000009838-thumb.jpg",
+  "SWG": "https://cse.sds.bracu.ac.bd/storage/media/143/conversions/Swattic-Ghose-thumb.png",
+  "SWV": "https://cse.sds.bracu.ac.bd/storage/media/883/conversions/180A1133-(1)-(1)-thumb.jpg",
+  "SZD": "https://cse.sds.bracu.ac.bd/storage/media/425/conversions/Capture-thumb.JPG",
+  "SZI": "https://cse.sds.bracu.ac.bd/storage/media/947/conversions/szi_1-thumb.jpg",
+  "SZZ": "https://cse.sds.bracu.ac.bd/storage/media/807/conversions/photo_2024-12-22_23-19-05-thumb.jpg",
+  "TAP": "https://cse.sds.bracu.ac.bd/storage/media/708/conversions/Tasnim-Ahsan-Prome-2-thumb.jpg",
+  "TAV": "https://cse.sds.bracu.ac.bd/storage/media/986/conversions/CV-image_resized-thumb.jpg",
+  "THL": "https://cse.sds.bracu.ac.bd/storage/media/816/conversions/1000055935-thumb.jpg",
+  "TMD": "https://cse.sds.bracu.ac.bd/storage/media/1093/conversions/1000044238-thumb.jpg",
+  "TMY": "https://cse.sds.bracu.ac.bd/storage/media/296/conversions/photo-thumb.jpg",
+  "TSM": "https://cse.sds.bracu.ac.bd/storage/media/151/conversions/IMG_20230610_234322-thumb.jpg",
+  "NKBS": "https://cse.sds.bracu.ac.bd/storage/media/656/conversions/274520567_1792428844287824_2525838949532722629_n-thumb.jpg",
+  "TWK": "https://cse.sds.bracu.ac.bd/storage/media/841/conversions/20230429_173526-(1)-thumb.jpg",
+  "UJT": "https://cse.sds.bracu.ac.bd/storage/media/800/conversions/CSE_Umme-Jannat-Taposhi---Copy-thumb.jpeg",
+  "TSE": "https://cse.sds.bracu.ac.bd/storage/media/1018/conversions/Tasneem-thumb.jpg",
+  "UPM": "https://cse.sds.bracu.ac.bd/storage/media/751/conversions/IMG_20240411_223023_357-removebg-preview-thumb.jpg",
+  "UTS": "https://cse.sds.bracu.ac.bd/storage/media/416/conversions/06b1ecc6-d1ed-484d-9df0-698cf358007e-thumb.jpeg",
+  "ZMD": "https://cse.sds.bracu.ac.bd/storage/media/913/conversions/Zaber_Mohammad-removebg-preview-thumb.png",
+  "YND": "https://cse.sds.bracu.ac.bd/storage/media/293/conversions/my-passport-photo-thumb.jpg",
+  "ZYH": "https://cse.sds.bracu.ac.bd/storage/media/691/conversions/1727710181867-thumb.jpeg",
+  "ZAZ": "https://cse.sds.bracu.ac.bd/storage/media/971/conversions/1000080767-thumb.jpg",
+  "MAO": "https://cse.sds.bracu.ac.bd/storage/media/263/conversions/Mirza-Abdullah-Al-Noman-(2)-thumb.jpg",
+  "MTSM": "https://cse.sds.bracu.ac.bd/storage/media/1031/conversions/1000046204-thumb.jpg",
+  "MZG": "https://cse.sds.bracu.ac.bd/storage/media/275/conversions/agopago-thumb.jpg",
+  "NNTN": "https://cse.sds.bracu.ac.bd/storage/media/954/conversions/rsz_3image-thumb.jpg",
+  "NUR": "https://cse.sds.bracu.ac.bd/storage/media/876/conversions/WhatsApp-Image-2025-02-04-at-19.26.52_a37718d4-thumb.jpg",
+  "PLN": "https://cse.sds.bracu.ac.bd/storage/media/1058/conversions/C870E399-5697-4CF9-AC4C-4067D2CAE35C-thumb.jpeg",
+  "STNM": "https://cse.sds.bracu.ac.bd/storage/media/939/conversions/Screenshot-2025-08-22-at-23-56-15-BUCSE-thumb.png",
+  "NFS": "https://cse.sds.bracu.ac.bd/storage/media/895/conversions/Nafis-Faisal-thumb.jpg",
+  "SMYA": "https://cse.sds.bracu.ac.bd/storage/media/1013/conversions/ND-127889-A-thumb.jpg",
+  "ZBH": "https://cse.sds.bracu.ac.bd/storage/media/639/conversions/IMG_4627-thumb.jpeg",
+  "ANKH": "https://cse.sds.bracu.ac.bd/storage/media/853/conversions/Anika_Ahmed-thumb.jpeg",
+  "CNKY": "https://cse.sds.bracu.ac.bd/storage/media/974/conversions/IMG_20250331_131743114_HDR-thumb.jpg",
+  "CEAS": "https://cse.sds.bracu.ac.bd/storage/media/984/conversions/20250528_190447-thumb.jpg",
+  "AAF": "https://cse.sds.bracu.ac.bd/storage/media/432/conversions/resize-1702065788195768208IMG20230208WA000701-thumb.jpeg",
+  "ADD": "https://cse.sds.bracu.ac.bd/storage/media/515/conversions/AYESHA-SIDDIKA-thumb.jpg",
+  "MKY": "https://cse.sds.bracu.ac.bd/storage/media/796/conversions/cd-259040-thumb.jpg",
+  "AKHD": "https://cse.sds.bracu.ac.bd/storage/media/772/conversions/Abdullah-Khondoker-thumb.jpeg",
+  "ANV": "https://cse.sds.bracu.ac.bd/storage/media/1014/conversions/rsz_20251226_165734-v1-thumb.jpg",
+  "AOHE": "https://cse.sds.bracu.ac.bd/storage/media/824/conversions/Abu-Obaida-Hasme-thumb.jpg",
+  "ASMN": "https://cse.sds.bracu.ac.bd/storage/media/746/conversions/IMG_0764-(1)-thumb.png",
+  "MAZW": "https://cse.sds.bracu.ac.bd/storage/media/829/conversions/IMG20250121173235-thumb.jpg",
+  "FDM": "https://cse.sds.bracu.ac.bd/storage/media/651/conversions/profile-img-thumb.jpg",
+  "FUL": "https://cse.sds.bracu.ac.bd/storage/media/850/conversions/shafiDP23-thumb.jpg",
+  "HAS": "https://cse.sds.bracu.ac.bd/storage/media/950/conversions/unnamed-thumb.jpg",
+  "KRP": "https://cse.sds.bracu.ac.bd/storage/media/782/conversions/DSC_3487ccc-(1)-thumb.jpg",
+  "CMHQ": "https://cse.sds.bracu.ac.bd/storage/media/894/conversions/IMG_4577-thumb.jpeg",
+  "KSJ": "https://cse.sds.bracu.ac.bd/storage/media/956/conversions/rsz_77728b5f-3cad-4fb4-a8b8-2f65cab50b3e-thumb.jpg",
+  "LMI": "https://cse.sds.bracu.ac.bd/storage/media/421/conversions/20220131_142010resized3-thumb.jpg",
+  "MAF": "https://cse.sds.bracu.ac.bd/storage/media/687/conversions/asif_image-thumb.png",
+  "CSDM": "https://cse.sds.bracu.ac.bd/storage/media/1015/conversions/Sadduu-thumb.jpg",
+  "CSSA": "https://cse.sds.bracu.ac.bd/storage/media/944/conversions/bd5a81d1-6f22-44c7-8d0e-77b90738bb25-thumb.jpeg",
+  "CMNB": "https://cse.sds.bracu.ac.bd/storage/media/924/conversions/IMG_7467-thumb.jpg",
+  "CAJM": "https://cse.sds.bracu.ac.bd/storage/media/958/conversions/277302287_1819857581537774_8775604598210294567_n-thumb.jpg",
+  "CAYR": "https://cse.sds.bracu.ac.bd/storage/media/898/conversions/Picsart_25-07-25_11-22-45-388-thumb.jpg",
+  "MSDH": "https://cse.sds.bracu.ac.bd/storage/media/826/conversions/IMG_7849-thumb.JPG",
+  "MTJ": "https://cse.sds.bracu.ac.bd/storage/media/749/conversions/dp-(3)-thumb.jpg",
+  "CFTP": "https://cse.sds.bracu.ac.bd/storage/media/904/conversions/PRAPTY-thumb.jpg",
+  "MAFZ": "https://cse.sds.bracu.ac.bd/storage/media/740/conversions/IMG_0542-thumb.jpg",
+  "MZW": "https://cse.sds.bracu.ac.bd/storage/media/739/conversions/Screenshot_1-thumb.png",
+  "CFBB": "https://cse.sds.bracu.ac.bd/storage/media/929/conversions/512924937_2536308553379033_7875072229755086999_n-thumb.jpg",
+  "CMHH": "https://cse.sds.bracu.ac.bd/storage/media/1001/conversions/IMG_4225-thumb.jpg",
+  "NTB": "https://cse.sds.bracu.ac.bd/storage/media/727/conversions/image-1000x1000-thumb.jpg",
+  "CSSN": "https://cse.sds.bracu.ac.bd/storage/media/907/conversions/pfp-thumb.jpg",
+  "NWT": "https://cse.sds.bracu.ac.bd/storage/media/276/conversions/IMG-20221023-WA0002-new-thumb.jpg",
+  "CSJP": "https://cse.sds.bracu.ac.bd/storage/media/981/conversions/Untitled-picture-thumb.png",
+  "PML": "https://cse.sds.bracu.ac.bd/storage/media/214/conversions/Md-Rifat-Alam-Pomil-thumb.jpg",
+  "CQAE": "https://cse.sds.bracu.ac.bd/storage/media/914/conversions/1000005565-thumb.jpg",
+  "CFBH": "https://cse.sds.bracu.ac.bd/storage/media/921/conversions/Farah-Binta-Haque-Photo-thumb.jpg",
+  "CAKM": "https://cse.sds.bracu.ac.bd/storage/media/1032/conversions/555152511_1478897986757712_4259342320498000116_n-(1)-thumb.jpg",
+  "CSFO": "https://cse.sds.bracu.ac.bd/storage/media/900/conversions/IMG_1904-(2)-thumb.jpg",
+  "SJM": "https://cse.sds.bracu.ac.bd/storage/media/873/conversions/Adobe-Express---file-(1)-thumb.jpg",
+  "MRSO": "https://cse.sds.bracu.ac.bd/storage/media/968/conversions/1000022478-thumb.jpg",
+  "SLAR": "https://cse.sds.bracu.ac.bd/storage/media/994/conversions/CanvaEdite-thumb.jpeg",
+  "SSKD": "https://cse.sds.bracu.ac.bd/storage/media/808/conversions/IMG_247011-thumb.JPG",
+  "STV": "https://cse.sds.bracu.ac.bd/storage/media/244/conversions/IMG-20230629-WA0021-thumb.jpg",
+  "TJW": "https://cse.sds.bracu.ac.bd/storage/media/154/conversions/Tajwar_Photo-thumb.png",
+  "TRZA": "https://cse.sds.bracu.ac.bd/storage/media/732/conversions/-jmnvjq_Original-thumb.jpeg",
+  "WLV": "https://cse.sds.bracu.ac.bd/storage/media/952/conversions/imresizer-1730430535595-thumb.jpg",
+  "AHA": "https://cse.sds.bracu.ac.bd/storage/media/933/conversions/DSC_1239-thumb.JPG",
+  "NRT": "https://cse.sds.bracu.ac.bd/storage/media/881/conversions/IMG_7322-thumb.jpeg",
+  "SMDS": "https://cse.sds.bracu.ac.bd/storage/media/966/conversions/IMG_20220302_084903-(1)-thumb.jpg",
+  "RAZW": "https://cse.sds.bracu.ac.bd/storage/media/915/conversions/pic_new-thumb.jpg",
+  "ISR": "https://cse.sds.bracu.ac.bd/storage/media/445/conversions/Picture-thumb.jpg",
+  "IST": "https://cse.sds.bracu.ac.bd/storage/media/1050/conversions/Ishmam-latest-ration-3_4-thumb.jpg",
+  "RBB": "https://cse.sds.bracu.ac.bd/storage/media/736/conversions/NUR02248-Reflection-Removed-thumb.jpeg",
+  "YAI": "https://cse.sds.bracu.ac.bd/storage/media/827/conversions/WhatsApp-Image-2024-07-01-at-2.45.57-AM-thumb.jpeg",
+  "DCO": "https://cse.sds.bracu.ac.bd/storage/media/804/conversions/oie_FA47Tw9KNuhu-(1)-thumb.jpg"
+};
+
+const TIME_SLOTS=['8:00 AM - 9:20 AM','9:30 AM - 10:50 AM','11:00 AM - 12:20 PM','12:30 PM - 1:50 PM','2:00 PM - 3:20 PM','3:30 PM - 4:50 PM','5:00 PM - 6:20 PM','6:00 PM - 7:20 PM','7:30 PM - 8:50 PM'];
 const DAYS=['Saturday','Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
 let facultyList=[],currentSug=[];
 
@@ -381,6 +694,16 @@ async function loadFacultyList(){
     $s.textContent=`${facultyList.length} faculty members loaded — start typing to search`;
     renderDirectory();
     document.getElementById('dir-section').style.display='block';
+    
+    // Check query parameter after loading list successfully
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialParam = urlParams.get('initial');
+    if (initialParam) {
+      const found = facultyList.find(f => f.initial.toLowerCase() === initialParam.toLowerCase());
+      if (found) {
+        loadSchedule(found);
+      }
+    }
   }catch(e){$s.textContent='Could not load faculty list. Check your internet connection.';$s.className='error';}
 }
 
@@ -397,15 +720,19 @@ function renderDirectory(filterQ=''){
   });
   count.textContent=`${list.length} ${isContractual?'contractual':'full-time'} faculty member${list.length!==1?'s':''}${q?' matching "'+filterQ+'"':''}` ;
   if(!list.length){grid.innerHTML='<div class="dir-empty">No faculty found</div>';return;}
-  grid.innerHTML=list.map(f=>`
+  grid.innerHTML=list.map(f=>{
+    const picUrl=FACULTY_PICS[f.initial]||'';
+    const badgeHtml=picUrl?`<img src="${picUrl}" alt="${esc(f.initial)}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"/>`:esc(f.initial);
+    return `
     <div class="fac-tile" onclick="tileClick('${f.initial.replace(/'/g,"\\'")}')"> 
-      <div class="tile-badge">${esc(f.initial)}</div>
+      <div class="tile-badge">${badgeHtml}</div>
       <div class="tile-info">
         <div class="tile-name">${esc(f.name)}</div>
         <div class="tile-desig">${esc(f.designation)}</div>
         ${f.room?`<div class="tile-room">🚪 ${esc(f.room)}</div>`:''}
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function tileClick(initial){
@@ -517,20 +844,30 @@ function buildCard(faculty,rows){
       const raw=(cells[ci]||'').trim();
       if(raw){
         const parts=raw.split(',').map(p=>p.replace(/\n/g,' ').trim()).filter(Boolean);
-        tbody+=`<td><span class="cell-class">${parts.join('<br>')}</span></td>`;
+        const isConsultation = parts.some(p => p.toLowerCase().includes('consult'));
+        const isResearch = parts.some(p => p.toLowerCase().includes('research') || p.toLowerCase().includes('thesis') || p.toLowerCase().includes('project'));
+        if (isConsultation) {
+          tbody+=`<td><span class="cell-consultation">${parts.join('<br>')}</span></td>`;
+        } else if (isResearch) {
+          tbody+=`<td><span class="cell-research">${parts.join('<br>')}</span></td>`;
+        } else {
+          tbody+=`<td><span class="cell-class">${parts.join('<br>')}</span></td>`;
+        }
       }else tbody+=`<td></td>`;
     });
     tbody+=`</tr>`;
   }
 
   const initials=faculty.initial;
+  const picUrl=FACULTY_PICS[initials]||'';
+  const avatarHtml=picUrl?`<img src="${picUrl}" alt="${esc(faculty.name)}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"/>`:esc(initials);
   const emailChip=faculty.email?`<span class="fac-chip">✉️ <a href="mailto:${esc(faculty.email)}">${esc(faculty.email)}</a></span>`:'';
   const roomChip=faculty.room?`<span class="fac-chip">🚪 Room ${esc(faculty.room)}</span>`:'';
   const desigChip=faculty.designation?`<span class="fac-chip">🎓 ${esc(faculty.designation)}</span>`:'';
 
   return `<div class="faculty-card">
     <div class="fac-header">
-      <div class="fac-avatar">${esc(initials)}</div>
+      <div class="fac-avatar">${avatarHtml}</div>
       <div class="fac-info">
         <h2>${esc(faculty.name)}</h2>
         <div class="fac-meta">${desigChip}${roomChip}${emailChip}</div>
@@ -540,6 +877,8 @@ function buildCard(faculty,rows){
       <div class="section-title">Weekly Schedule</div>
       <div class="legend">
         <div class="legend-item"><div class="leg-dot leg-class"></div> Class assigned</div>
+        <div class="legend-item"><div class="leg-dot leg-consultation"></div> Consultation hour</div>
+        <div class="legend-item"><div class="leg-dot leg-research"></div> Thesis/Research</div>
       </div>
       <div class="schedule-wrap">
         <table><thead>${thead}</thead><tbody>${tbody}</tbody></table>
@@ -551,6 +890,41 @@ function buildCard(faculty,rows){
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 loadFacultyList();
+
+// Sidebar Toggle Logic
+const toggleBtn = document.getElementById('sidebar-toggle');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebar-overlay');
+const body = document.body;
+
+if (toggleBtn && sidebar && overlay) {
+  toggleBtn.addEventListener('click', () => {
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      const isOpen = sidebar.classList.toggle('open');
+      toggleBtn.classList.toggle('open', isOpen);
+      overlay.classList.toggle('show', isOpen);
+    } else {
+      body.classList.toggle('sidebar-collapsed');
+    }
+  });
+  
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    toggleBtn.classList.remove('open');
+    overlay.classList.remove('show');
+  });
+
+  window.addEventListener('resize', () => {
+    const isMobile = window.innerWidth <= 768;
+    if (!isMobile) {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+    } else {
+      toggleBtn.classList.remove('open');
+    }
+  });
+}
 </script>
 <footer>
   <div class="footer-inner">
@@ -574,5 +948,6 @@ loadFacultyList();
     <div class="footer-copy">Built for BRACU CSE students · Data sourced from the official faculty planner</div>
   </div>
 </footer>
+</div> <!-- Close main-wrapper-layout -->
 </body>
 </html>

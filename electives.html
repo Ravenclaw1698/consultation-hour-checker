@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>BRACU CSE – Elective Courses</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#3b82f6;--primary-dark:#1d4ed8;--primary-light:rgba(59,130,246,0.15);
+  --accent:#10b981;--surface:#27272a;--bg:#18181b;
+  --text:#f4f4f5;--muted:#a1a1aa;--border:#3f3f46;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+  --success:#10b981;--success-light:rgba(16,185,129,0.15);
+  --danger:#ef4444;--danger-light:rgba(239,68,68,0.15);
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* ── SIDEBAR NAVIGATION ── */
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:240px;
+  background:var(--surface);border-right:1px solid var(--border);
+  z-index:900;padding:32px 16px;display:flex;flex-direction:column;
+  transition:transform .3s ease;
+}
+.sidebar-nav{display:flex;flex-direction:column;gap:8px}
+.sidebar-link{
+  display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;
+  font-size:.9rem;font-weight:600;color:var(--muted);text-decoration:none;transition:all .2s;
+}
+.sidebar-link:hover{color:var(--text);background:rgba(15,23,42,.04)}
+.sidebar-link.active{color:var(--primary);background:var(--primary-light)}
+.sidebar-link .nav-icon{font-size:1.1rem}
+
+.sidebar-toggle{
+  display:flex;position:fixed;top:16px;left:256px;z-index:1000;
+  width:40px;height:40px;border-radius:10px;background:var(--surface);
+  border:1.5px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.08);
+  cursor:pointer;flex-direction:column;justify-content:center;align-items:center;gap:4px;padding:0;
+  transition:left .3s ease, transform .2s;
+}
+.sidebar-toggle span{display:block;width:18px;height:2px;background:var(--text);border-radius:2px;transition:transform .2s,opacity .2s}
+
+/* Collapsed state on desktop */
+.sidebar-collapsed .sidebar{transform:translateX(-100%)}
+.sidebar-collapsed .main-wrapper-layout{padding-left:0}
+.sidebar-collapsed .sidebar-toggle{left:16px}
+
+/* Hamburger animations (primarily mobile when open) */
+.sidebar-toggle.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.sidebar-toggle.open span:nth-child(2){opacity:0}
+.sidebar-toggle.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+
+.sidebar-overlay{
+  display:none;position:fixed;inset:0;background:rgba(15,23,42,.3);
+  backdrop-filter:blur(4px);z-index:850;opacity:0;transition:opacity .3s ease;pointer-events:none;
+}
+.sidebar-overlay.show{opacity:1;pointer-events:all}
+
+.main-wrapper-layout{
+  padding-left:240px;min-height:100vh;display:flex;flex-direction:column;justify-content:space-between;
+  transition:padding-left .3s ease;
+}
+
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);box-shadow:24px 0 80px rgba(0,0,0,.15)}
+  .sidebar-toggle{left:16px}
+  .main-wrapper-layout{padding-left:0}
+  
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-toggle.open{left:256px}
+  .sidebar-overlay{display:block}
+}
+
+/* ── HERO ── */
+.hero{
+  background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 50%,#10b981 100%);
+  padding:48px 24px 80px;text-align:center;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.15);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.25);border-radius:100px;
+  padding:5px 14px;font-size:.75rem;font-weight:600;color:#f3e8ff;
+  letter-spacing:.5px;text-transform:uppercase;margin-bottom:16px;
+}
+.hero h1{font-size:2rem;font-weight:700;color:#fff;line-height:1.2;margin-bottom:8px}
+.hero h1 span{
+  background:linear-gradient(90deg,#93c5fd,#34d399);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero p{color:#f3e8ff;font-size:.95rem;font-weight:400}
+
+/* ── SEARCH CARD ── */
+.search-card{
+  max-width:1100px;margin:-36px auto 0;padding:24px;
+  background:var(--surface);border-radius:20px;
+  box-shadow:var(--shadow);border:1px solid var(--border);position:relative;z-index:10;
+}
+.search-label{font-size:.8rem;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+.search-row{position:relative}
+#search-input{
+  width:100%;padding:13px 16px 13px 44px;border:2px solid var(--border);border-radius:12px;
+  font-size:.95rem;font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s;
+  color:var(--text);background:#1c1c1f;
+}
+#search-input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(59,130,246,.25);background:#27272a}
+.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:1.1rem;pointer-events:none}
+
+/* ── MAIN CONTAINER ── */
+.container{max-width:100%;margin:0;padding:32px 40px 60px}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:20px}
+.tab-btn{
+  padding:12px 24px;font-size:.88rem;font-weight:600;cursor:pointer;
+  border:none;background:none;font-family:inherit;color:var(--muted);
+  border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;
+}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab-btn:hover:not(.active){color:var(--text)}
+
+.dir-count{font-size:.82rem;color:var(--muted);margin-bottom:18px}
+
+/* ── ELECTIVES GRID ── */
+.electives-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;
+}
+.elective-card{
+  background:var(--surface);border:1.5px solid var(--border);border-radius:12px;
+  padding:16px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;
+  transition:border-color .15s,box-shadow .15s,transform .15s;
+}
+.elective-card:hover{border-color:var(--primary);box-shadow:var(--shadow);transform:translateY(-2px)}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
+.course-code{
+  background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;
+  font-size:.75rem;font-weight:700;padding:3px 8px;border-radius:6px;letter-spacing:.3px;
+}
+.status-pill{
+  font-size:.65rem;font-weight:700;padding:2px 6px;border-radius:5px;text-transform:uppercase;
+}
+.status-pill.active{background:var(--success-light);color:var(--success)}
+.status-pill.inactive{background:var(--danger-light);color:var(--danger)}
+.course-title{font-size:.88rem;font-weight:700;color:var(--text);line-height:1.35;margin-bottom:10px;flex:1}
+.card-details{font-size:.78rem;color:var(--muted);border-top:1px solid var(--border);padding-top:10px;display:flex;flex-direction:column;gap:4px}
+.detail-item{display:flex;align-items:center;gap:6px}
+.detail-icon{font-size:.8rem;color:var(--primary)}
+
+.dir-empty{text-align:center;color:var(--muted);font-size:.9rem;padding:48px 20px;grid-column:1/-1}
+
+/* ── STATUS ── */
+#status{text-align:center;font-size:.88rem;color:var(--muted);margin:24px 0;min-height:1.5em}
+#status.error{color:#dc2626}
+.spinner{
+  width:18px;height:18px;border:2.5px solid #dbeafe;border-top-color:var(--primary);
+  border-radius:50%;animation:spin .7s linear infinite;display:inline-block;
+  vertical-align:middle;margin-right:6px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(0,0,0,.65);backdrop-filter:blur(4px);
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:16px;padding-top:8vh;
+  overflow-y:auto;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-box{
+  background:var(--surface);border-radius:20px;width:100%;max-width:640px;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  transform:translateY(24px) scale(.97);transition:transform .25s;
+  position:relative;flex-shrink:0;overflow:hidden;
+}
+.modal-overlay.open .modal-box{transform:translateY(0) scale(1)}
+.modal-close{
+  position:absolute;top:14px;right:14px;
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:1rem;line-height:1;transition:background .15s;z-index:20;
+  color:var(--text);
+}
+.modal-close:hover{background:var(--danger-light);color:var(--danger)}
+
+.modal-header{
+  background:linear-gradient(135deg,#1e3a8a,#2563eb 60%,#10b981);
+  padding:28px;color:#fff;
+}
+.modal-course-badge{
+  display:inline-flex;align-items:center;gap:8px;margin-bottom:8px;
+}
+.modal-course-code{
+  background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);
+  padding:4px 10px;border-radius:8px;font-size:.78rem;font-weight:700;letter-spacing:.5px;
+}
+.modal-course-title{font-size:1.3rem;font-weight:700;line-height:1.3;margin-top:6px}
+
+.modal-body{padding:28px;display:flex;flex-direction:column;gap:20px;max-height:60vh;overflow-y:auto}
+.info-section{display:flex;flex-direction:column;gap:6px}
+.info-label{font-size:.75rem;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase}
+.info-value{font-size:.92rem;color:var(--text);line-height:1.5}
+.info-value.empty{color:var(--muted);font-style:italic}
+
+.outline-box{
+  background:#1c1c1f;border:1.5px solid var(--border);border-radius:12px;padding:12px 16px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.outline-text{font-size:.85rem;font-weight:500}
+.outline-btn{
+  background:var(--primary);color:#fff;border:none;border-radius:8px;
+  padding:6px 12px;font-size:.8rem;font-weight:600;cursor:pointer;text-decoration:none;
+  transition:background .15s;
+}
+.outline-btn:hover{background:var(--primary-dark)}
+
+/* ── FACULTIES LIST ── */
+.faculty-list{display:flex;flex-direction:column;gap:10px}
+.fac-row{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px 14px;background:#1c1c1f;border:1.5px solid var(--border);border-radius:12px;
+  cursor:pointer;transition:border-color .15s, transform .15s;
+}
+.fac-row:hover{
+  border-color:var(--primary);
+  transform:translateY(-1px);
+}
+.fac-left{display:flex;align-items:center;gap:12px}
+.fac-initial{
+  width:36px;height:36px;border-radius:8px;
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  color:#fff;font-size:.75rem;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.fac-name{font-size:.85rem;font-weight:600;color:var(--text)}
+.email-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;border-radius:8px;
+  background:rgba(37,99,235,.1);color:var(--primary);text-decoration:none;
+  transition:all .15s;font-size:.9rem;
+}
+.email-btn:hover{background:var(--primary);color:#fff}
+
+@media(max-width:600px){
+  .hero h1{font-size:1.4rem}
+  .search-card{margin:16px;border-radius:16px;padding:20px}
+  .tabs{margin-bottom:14px}
+  .tab-btn{padding:10px 16px;font-size:.8rem}
+  .electives-grid{grid-template-columns:1fr;gap:12px}
+  .modal-overlay{padding:10px;padding-top:4vh}
+  .modal-header{padding:20px}
+  .modal-body{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle Menu">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<aside class="sidebar" id="sidebar">
+  <nav class="sidebar-nav">
+    <a href="index.html" class="sidebar-link">
+      <span class="nav-icon">📅</span>
+      <span class="nav-text">Consultation Hour</span>
+    </a>
+    <a href="electives.html" class="sidebar-link active">
+      <span class="nav-icon">📚</span>
+      <span class="nav-text">Elective List</span>
+    </a>
+  </nav>
+</aside>
+
+<div class="main-wrapper-layout">
+
+<div class="hero">
+  <div class="hero-badge">📚 BRAC University CSE</div>
+  <h1>Elective <span>Course Directory</span></h1>
+  <p>Explore active and inactive elective courses, pre-requisites, and prospective faculty members</p>
+</div>
+
+<div class="search-card">
+  <div class="search-label">Filter Electives</div>
+  <div class="search-row">
+    <span class="search-icon">🔍</span>
+    <input id="search-input" type="text" placeholder="Search by course code, title, pre-requisite, or faculty initials..." autocomplete="off"/>
+  </div>
+</div>
+
+<div class="container">
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="ACTIVE" id="tab-active">Active Electives</button>
+    <button class="tab-btn" data-tab="INACTIVE" id="tab-inactive">Inactive Electives</button>
+  </div>
+
+  <div class="dir-count" id="dir-count">Loading elective courses...</div>
+  <div id="status"></div>
+  <div class="electives-grid" id="electives-grid"></div>
+</div>
+
+<!-- Details Modal -->
+<div class="modal-overlay" id="modal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <button class="modal-close" id="modal-close" title="Close">&#x2715;</button>
+    <div id="modal-content">
+      <!-- Dynamic Details Content -->
+    </div>
+  </div>
+</div>
+
+<script>
+const SHEET_ID = '1-JM6a-JM4y4TiqMv9M4OXMBTnIAbn0lhsvfVGlfR1OU';
+const FACULTY_PICS = {
+  "MAM": "https://cse.sds.bracu.ac.bd/storage/media/176/conversions/Dr.-Mahbubul-Alam-Majumdar-CSE-thumb.jpg",
+  "SKZ": "https://cse.sds.bracu.ac.bd/storage/media/173/conversions/Sadia-Hamid-Kazi-thumb.jpeg",
+  "KYK": "https://cse.sds.bracu.ac.bd/storage/media/175/conversions/Professor-Kaykobad-thumb.png",
+  "CMR": "https://cse.sds.bracu.ac.bd/storage/media/787/conversions/cmr_oct24-thumb.JPG",
+  "MSA": "https://cse.sds.bracu.ac.bd/storage/media/177/conversions/Mr.-Matin-Saad-Abdullah_0-thumb.jpg",
+  "KHR": "https://cse.sds.bracu.ac.bd/storage/media/180/conversions/Dr.-Md.-Khalilur-Rhaman-thumb.jpg",
+  "GRA": "https://cse.sds.bracu.ac.bd/storage/media/179/conversions/Md.-Golam-Rabiul-Alam-CSE-thumb.jpg",
+  "SDF": "https://cse.sds.bracu.ac.bd/storage/media/127/conversions/MSFerdousNew-thumb.jpeg",
+  "ACH": "https://cse.sds.bracu.ac.bd/storage/media/171/conversions/amitabhaSir-thumb.jpg",
+  "FDC": "https://cse.sds.bracu.ac.bd/storage/media/507/conversions/FC-thumb.jpeg",
+  "SWK": "https://cse.sds.bracu.ac.bd/storage/media/668/conversions/13445786_10154162965585903_634604791187830693_n-thumb.jpg",
+  "TLQ": "https://cse.sds.bracu.ac.bd/storage/media/489/conversions/haquesmtaiabul-0151-thumb.jpg",
+  "AMK": "https://cse.sds.bracu.ac.bd/storage/media/428/conversions/AbuKhan-200dpi-thumb.jpg",
+  "MNY": "https://cse.sds.bracu.ac.bd/storage/media/238/conversions/Yan-Profile-Picture-thumb.jpg",
+  "ASA": "https://cse.sds.bracu.ac.bd/storage/media/220/conversions/Photo_shimul-(2)-thumb.jpg",
+  "MIH": "https://cse.sds.bracu.ac.bd/storage/media/945/conversions/Iqbal_CSE-2-thumb.png",
+  "FYS": "https://cse.sds.bracu.ac.bd/storage/media/251/conversions/pic1-thumb.jpeg",
+  "MSAH": "https://cse.sds.bracu.ac.bd/storage/media/899/conversions/MSAH-thumb.png",
+  "AQZ": "https://cse.sds.bracu.ac.bd/storage/media/438/conversions/IMG_5420-thumb.jpeg",
+  "AAR": "https://cse.sds.bracu.ac.bd/storage/media/167/conversions/Annajiat-Alim-Rasel-for-bucse-v4-thumb.jpg",
+  "AKTD": "https://cse.sds.bracu.ac.bd/storage/media/885/conversions/resized_adnan_photo_1050x1400-thumb.jpg",
+  "MSI": "https://cse.sds.bracu.ac.bd/storage/media/677/conversions/WhatsApp-Image-2024-08-19-at-7.59.02-PM-thumb.jpeg",
+  "TAW": "https://cse.sds.bracu.ac.bd/storage/media/227/conversions/Tawhid_Outer_bucse-v4-thumb.jpg",
+  "IBA": "https://cse.sds.bracu.ac.bd/storage/media/418/conversions/Md.-Imran-Bin-Azad-thumb.jpg",
+  "NNC": "https://cse.sds.bracu.ac.bd/storage/media/463/conversions/NNC_7407_2-thumb.jpg",
+  "MAHR": "https://cse.sds.bracu.ac.bd/storage/media/1052/conversions/IMG-20250813-WA0011-(1)-thumb.jpg",
+  "TRZ": "https://cse.sds.bracu.ac.bd/storage/media/437/conversions/308317759_805269880594504_5614694467692864607_n-thumb.jpg",
+  "TNMF": "https://cse.sds.bracu.ac.bd/storage/media/806/conversions/Tasnim.Ferdous-thumb.jpeg",
+  "DZK": "https://cse.sds.bracu.ac.bd/storage/media/142/conversions/Dewan-Ziaul-Karim-CSE-thumb.jpg",
+  "ARF": "https://cse.sds.bracu.ac.bd/storage/media/12/conversions/185544241_10222657419097685_8218596358068594256_n-thumb.jpg",
+  "RRH": "https://cse.sds.bracu.ac.bd/storage/media/814/conversions/20240920_215240_Original_Original-thumb.jpeg",
+  "SDQ": "https://cse.sds.bracu.ac.bd/storage/media/493/conversions/81586264_2679374838806240_2920960876657770496_n-thumb.jpg",
+  "NZRF": "https://cse.sds.bracu.ac.bd/storage/media/852/conversions/WhatsApp-Image-2025-03-29-at-10.30.46-PM-thumb.jpeg",
+  "AQU": "https://cse.sds.bracu.ac.bd/storage/media/1046/conversions/AmbientBliss-01100-thumb.jpg",
+  "SBB": "https://cse.sds.bracu.ac.bd/storage/media/849/conversions/Md.-Sabbir-Ahmed_SDS11-thumb.png",
+  "MAHS": "https://cse.sds.bracu.ac.bd/storage/media/1053/conversions/BRACU-thumb.jpg",
+  "ASRF": "https://cse.sds.bracu.ac.bd/storage/media/1089/conversions/Shanto_cropped-thumb.png",
+  "MVH": "https://cse.sds.bracu.ac.bd/storage/media/1056/conversions/Photo-of-Naveed-thumb.jpg",
+  "RKBR": "https://cse.sds.bracu.ac.bd/storage/media/1049/conversions/20260323_173030-(1)-(1)-thumb.jpg",
+  "SKIB": "https://cse.sds.bracu.ac.bd/storage/media/1035/conversions/WhatsApp-Image-2026-01-07-at-12.01.03-AM-(1)-thumb.jpeg",
+  "WHMJ": "https://cse.sds.bracu.ac.bd/storage/media/1072/conversions/WhatsApp-Image-2026-06-10-at-9.56.07-PM-thumb.jpeg",
+  "DPU": "https://cse.sds.bracu.ac.bd/storage/media/862/conversions/DPU_v3__-thumb.png",
+  "SMUR": "https://cse.sds.bracu.ac.bd/storage/media/1057/conversions/1000181921-thumb.jpg",
+  "ADU": "https://cse.sds.bracu.ac.bd/storage/media/527/conversions/received_804100854892030-thumb.jpeg",
+  "BIJS": "https://cse.sds.bracu.ac.bd/storage/media/896/conversions/photo-thumb.png",
+  "AFA": "https://cse.sds.bracu.ac.bd/storage/media/910/conversions/IMG_4432-thumb.jpeg",
+  "SVKG": "https://cse.sds.bracu.ac.bd/storage/media/942/conversions/avatar-thumb.JPG",
+  "NAFR": "https://cse.sds.bracu.ac.bd/storage/media/931/conversions/Picsart_25-07-16_11-31-45-661~2-thumb.jpg",
+  "ARPD": "https://cse.sds.bracu.ac.bd/storage/media/988/conversions/unnamed-thumb.jpg",
+  "ITTS": "https://cse.sds.bracu.ac.bd/storage/media/989/conversions/DSCF4218-(1)-(2)-thumb.jpg",
+  "AHF": "https://cse.sds.bracu.ac.bd/storage/media/716/conversions/Pic-4-removebg4-thumb.png",
+  "SOSB": "https://cse.sds.bracu.ac.bd/storage/media/1060/conversions/now11-thumb.jpg",
+  "AHU": "https://cse.sds.bracu.ac.bd/storage/media/213/conversions/1686895519433-thumb.png",
+  "AIB": "https://cse.sds.bracu.ac.bd/storage/media/490/conversions/sds_photo-(2)-thumb.png",
+  "AJA": "https://cse.sds.bracu.ac.bd/storage/media/242/conversions/IMG_8412-thumb.JPG",
+  "ANK": "https://cse.sds.bracu.ac.bd/storage/media/130/conversions/Latest-2023-thumb.jpg",
+  "APM": "https://cse.sds.bracu.ac.bd/storage/media/692/conversions/fil-thumb.jpeg",
+  "AQT": "https://cse.sds.bracu.ac.bd/storage/media/957/conversions/cropped-IMG_2305-(1)-(1)-thumb.jpg",
+  "ARD": "https://cse.sds.bracu.ac.bd/storage/media/848/conversions/Ayman_1050x1400-thumb.jpg",
+  "ART": "https://cse.sds.bracu.ac.bd/storage/media/1012/conversions/me_convo_pic-min2-3-4-zoom-(1)-thumb.jpg",
+  "ATY": "https://cse.sds.bracu.ac.bd/storage/media/935/conversions/IMG_3805-thumb.jpeg",
+  "FBAW": "https://cse.sds.bracu.ac.bd/storage/media/964/conversions/Faria-thumb.jpg",
+  "AVB": "https://cse.sds.bracu.ac.bd/storage/media/696/conversions/FacultyProfilePhoto-AVB-thumb.png",
+  "AYO": "https://cse.sds.bracu.ac.bd/storage/media/552/conversions/imgonline-com-ua-resize-fWlmYOhL17-thumb.jpg",
+  "DFD": "https://cse.sds.bracu.ac.bd/storage/media/123/conversions/9bca0dcd-4cb4-4758-9e69-72c4bcd18a67-thumb.jpg",
+  "EHD": "https://cse.sds.bracu.ac.bd/storage/media/730/conversions/file-thumb.jpg",
+  "EHQ": "https://cse.sds.bracu.ac.bd/storage/media/866/conversions/Ehtashamul-Haque-Rescaled-thumb.jpg",
+  "FFR": "https://cse.sds.bracu.ac.bd/storage/media/725/conversions/382716541_1365837747636263_76914-thumb.jpg",
+  "FGZ": "https://cse.sds.bracu.ac.bd/storage/media/67/conversions/dsc_3481-copyjpg-thumb.jpg",
+  "FIC": "https://cse.sds.bracu.ac.bd/storage/media/776/conversions/0eb23ec3-028e-4358-ba23-a76b6e858614-thumb.jpeg",
+  "FZN": "https://cse.sds.bracu.ac.bd/storage/media/433/conversions/329894012_749135083212678_3162509178516727319_n-thumb.jpg",
+  "HFN": "https://cse.sds.bracu.ac.bd/storage/media/427/conversions/IMG_20230203_001102_309-thumb.jpg",
+  "LRK": "https://cse.sds.bracu.ac.bd/storage/media/920/conversions/lara_pp-thumb.jpeg",
+  "MAJI": "https://cse.sds.bracu.ac.bd/storage/media/906/conversions/PIC-thumb.jpg",
+  "HMH": "https://cse.sds.bracu.ac.bd/storage/media/1048/conversions/IMG_1241-thumb.jpeg",
+  "IBU": "https://cse.sds.bracu.ac.bd/storage/media/457/conversions/PXL_20230219_123143459-thumb.jpg",
+  "UTKR": "https://cse.sds.bracu.ac.bd/storage/media/923/conversions/profile_pic-thumb.jpg",
+  "FARS": "https://cse.sds.bracu.ac.bd/storage/media/912/conversions/Ahmad-Farhan-Shahriar-Chowdhury-thumb.jpg",
+  "NAHC": "https://cse.sds.bracu.ac.bd/storage/media/450/conversions/resizedAgain-thumb.jpg",
+  "ZLNM": "https://cse.sds.bracu.ac.bd/storage/media/911/conversions/me-thumb.jpg",
+  "KKS": "https://cse.sds.bracu.ac.bd/storage/media/269/conversions/kks-thumb.png",
+  "KFP": "https://cse.sds.bracu.ac.bd/storage/media/690/conversions/Kaniz_Fatema_Supti-thumb.jpg",
+  "KKP": "https://cse.sds.bracu.ac.bd/storage/media/799/conversions/photo_2024-11-26_20-27-29-(2)-thumb.jpg",
+  "KZMN": "https://cse.sds.bracu.ac.bd/storage/media/918/conversions/PXL_20240203_053807508.PORTRAIT-01-(1)-thumb.jpeg",
+  "MBM": "https://cse.sds.bracu.ac.bd/storage/media/889/conversions/rsz_180a1241-thumb.jpg",
+  "MDF": "https://cse.sds.bracu.ac.bd/storage/media/216/conversions/20220521_134912-thumb.jpg",
+  "MHDE": "https://cse.sds.bracu.ac.bd/storage/media/1022/conversions/MHDE-thumb.jpg",
+  "ALB": "https://cse.sds.bracu.ac.bd/storage/media/1025/conversions/1000017084-thumb.jpg",
+  "MNP": "https://cse.sds.bracu.ac.bd/storage/media/448/conversions/Screenshot-2023-12-10-202450-thumb.png",
+  "MNW": "https://cse.sds.bracu.ac.bd/storage/media/653/conversions/338169091_1352561268856342_7527722953256633615_n-thumb.jpg",
+  "MOM": "https://cse.sds.bracu.ac.bd/storage/media/941/conversions/1_1-(1)-thumb.jpg",
+  "MSMA": "https://cse.sds.bracu.ac.bd/storage/media/646/conversions/IMG_1846.HEIC~222-thumb.jpg",
+  "MUNR": "https://cse.sds.bracu.ac.bd/storage/media/864/conversions/180A0987-2-thumb.jpg",
+  "NFK": "https://cse.sds.bracu.ac.bd/storage/media/722/conversions/dark-grey-background-designify-thumb.png",
+  "NLH": "https://cse.sds.bracu.ac.bd/storage/media/886/conversions/23341028_CS_Niloy_Farhan-Lite-thumb.jpg",
+  "PBK": "https://cse.sds.bracu.ac.bd/storage/media/19/conversions/partha1-thumb.jpg",
+  "PDS": "https://cse.sds.bracu.ac.bd/storage/media/250/conversions/6227vh7r-thumb.png",
+  "PMD": "https://cse.sds.bracu.ac.bd/storage/media/685/conversions/Screenshot-2024-09-13-182747-thumb.png",
+  "NARC": "https://cse.sds.bracu.ac.bd/storage/media/987/conversions/rsz_download-(1)-thumb.png",
+  "PSMD": "https://cse.sds.bracu.ac.bd/storage/media/997/conversions/504609703_4165840810359886_788074703011464452_n-thumb.jpg",
+  "QUZA": "https://cse.sds.bracu.ac.bd/storage/media/29/conversions/Picture_Quazi-Ashikur-Rahman-thumb.jpeg",
+  "RAS": "https://cse.sds.bracu.ac.bd/storage/media/762/conversions/1730578041803-thumb.jpg",
+  "RBR": "https://cse.sds.bracu.ac.bd/storage/media/953/conversions/Generated-Image-October-02,-2025---12_39PM-thumb.png",
+  "RDW": "https://cse.sds.bracu.ac.bd/storage/media/877/conversions/1000031513-thumb.jpg",
+  "RKBM": "https://cse.sds.bracu.ac.bd/storage/media/667/conversions/IMG_0070-(3)-thumb.jpg",
+  "RFF": "https://cse.sds.bracu.ac.bd/storage/media/703/conversions/1-thumb.jpg",
+  "RKN": "https://cse.sds.bracu.ac.bd/storage/media/274/conversions/312093072_867632590914261_3932538558675141993_n-thumb.jpg",
+  "RSS": "https://cse.sds.bracu.ac.bd/storage/media/847/conversions/PassportPhoto-thumb.png",
+  "RFTS": "https://cse.sds.bracu.ac.bd/storage/media/771/conversions/WhatsApp-Image-2024-11-07-at-12.-thumb.jpg",
+  "SADA": "https://cse.sds.bracu.ac.bd/storage/media/972/conversions/profile-pic-thumb.png",
+  "SADF": "https://cse.sds.bracu.ac.bd/storage/media/649/conversions/937a9ad5-1bf8-4e4a-a227-5a855822f1b0-thumb.jpeg",
+  "SBDK": "https://cse.sds.bracu.ac.bd/storage/media/723/conversions/prof_pic2-thumb.jpg",
+  "FFU": "https://cse.sds.bracu.ac.bd/storage/media/836/conversions/DP-thumb.jpg",
+  "SDL": "https://cse.sds.bracu.ac.bd/storage/media/1075/conversions/20260606_210914_2-thumb.jpg",
+  "SBHN": "https://cse.sds.bracu.ac.bd/storage/media/992/conversions/SDS-Cover-thumb.jpg",
+  "NFMK": "https://cse.sds.bracu.ac.bd/storage/media/726/conversions/saif-image-thumb.jpg",
+  "SDU": "https://cse.sds.bracu.ac.bd/storage/media/750/conversions/D-155641-thumb.jpg",
+  "SHAH": "https://cse.sds.bracu.ac.bd/storage/media/1000/conversions/asif_pro-thumb.jpg",
+  "SHDM": "https://cse.sds.bracu.ac.bd/storage/media/757/conversions/5f404e4d-d696-4842-b801-6056d06b8b8a-thumb.jpg",
+  "SHRR": "https://cse.sds.bracu.ac.bd/storage/media/1036/conversions/desktop-wallpaper-black-high-resolution-14-solid-black-thumb.jpg",
+  "SHBK": "https://cse.sds.bracu.ac.bd/storage/media/423/conversions/yyy-(3)-thumb.jpg",
+  "NHBN": "https://cse.sds.bracu.ac.bd/storage/media/637/conversions/336744374_514804413963944_5825842436358764757_n-thumb.jpg",
+  "SRU": "https://cse.sds.bracu.ac.bd/storage/media/219/conversions/25994597_10214926721943019_7809588416887260573_n-thumb.jpg",
+  "SUE": "https://cse.sds.bracu.ac.bd/storage/media/456/conversions/Snapchat-1636393159-(1)-thumb.jpg",
+  "SULT": "https://cse.sds.bracu.ac.bd/storage/media/702/conversions/1000009838-thumb.jpg",
+  "SWG": "https://cse.sds.bracu.ac.bd/storage/media/143/conversions/Swattic-Ghose-thumb.png",
+  "SWV": "https://cse.sds.bracu.ac.bd/storage/media/883/conversions/180A1133-(1)-(1)-thumb.jpg",
+  "SZD": "https://cse.sds.bracu.ac.bd/storage/media/425/conversions/Capture-thumb.JPG",
+  "SZI": "https://cse.sds.bracu.ac.bd/storage/media/947/conversions/szi_1-thumb.jpg",
+  "SZZ": "https://cse.sds.bracu.ac.bd/storage/media/807/conversions/photo_2024-12-22_23-19-05-thumb.jpg",
+  "TAP": "https://cse.sds.bracu.ac.bd/storage/media/708/conversions/Tasnim-Ahsan-Prome-2-thumb.jpg",
+  "TAV": "https://cse.sds.bracu.ac.bd/storage/media/986/conversions/CV-image_resized-thumb.jpg",
+  "THL": "https://cse.sds.bracu.ac.bd/storage/media/816/conversions/1000055935-thumb.jpg",
+  "TMD": "https://cse.sds.bracu.ac.bd/storage/media/1093/conversions/1000044238-thumb.jpg",
+  "TMY": "https://cse.sds.bracu.ac.bd/storage/media/296/conversions/photo-thumb.jpg",
+  "TSM": "https://cse.sds.bracu.ac.bd/storage/media/151/conversions/IMG_20230610_234322-thumb.jpg",
+  "NKBS": "https://cse.sds.bracu.ac.bd/storage/media/656/conversions/274520567_1792428844287824_2525838949532722629_n-thumb.jpg",
+  "TWK": "https://cse.sds.bracu.ac.bd/storage/media/841/conversions/20230429_173526-(1)-thumb.jpg",
+  "UJT": "https://cse.sds.bracu.ac.bd/storage/media/800/conversions/CSE_Umme-Jannat-Taposhi---Copy-thumb.jpeg",
+  "TSE": "https://cse.sds.bracu.ac.bd/storage/media/1018/conversions/Tasneem-thumb.jpg",
+  "UPM": "https://cse.sds.bracu.ac.bd/storage/media/751/conversions/IMG_20240411_223023_357-removebg-preview-thumb.jpg",
+  "UTS": "https://cse.sds.bracu.ac.bd/storage/media/416/conversions/06b1ecc6-d1ed-484d-9df0-698cf358007e-thumb.jpeg",
+  "ZMD": "https://cse.sds.bracu.ac.bd/storage/media/913/conversions/Zaber_Mohammad-removebg-preview-thumb.png",
+  "YND": "https://cse.sds.bracu.ac.bd/storage/media/293/conversions/my-passport-photo-thumb.jpg",
+  "ZYH": "https://cse.sds.bracu.ac.bd/storage/media/691/conversions/1727710181867-thumb.jpeg",
+  "ZAZ": "https://cse.sds.bracu.ac.bd/storage/media/971/conversions/1000080767-thumb.jpg",
+  "MAO": "https://cse.sds.bracu.ac.bd/storage/media/263/conversions/Mirza-Abdullah-Al-Noman-(2)-thumb.jpg",
+  "MTSM": "https://cse.sds.bracu.ac.bd/storage/media/1031/conversions/1000046204-thumb.jpg",
+  "MZG": "https://cse.sds.bracu.ac.bd/storage/media/275/conversions/agopago-thumb.jpg",
+  "NNTN": "https://cse.sds.bracu.ac.bd/storage/media/954/conversions/rsz_3image-thumb.jpg",
+  "NUR": "https://cse.sds.bracu.ac.bd/storage/media/876/conversions/WhatsApp-Image-2025-02-04-at-19.26.52_a37718d4-thumb.jpg",
+  "PLN": "https://cse.sds.bracu.ac.bd/storage/media/1058/conversions/C870E399-5697-4CF9-AC4C-4067D2CAE35C-thumb.jpeg",
+  "STNM": "https://cse.sds.bracu.ac.bd/storage/media/939/conversions/Screenshot-2025-08-22-at-23-56-15-BUCSE-thumb.png",
+  "NFS": "https://cse.sds.bracu.ac.bd/storage/media/895/conversions/Nafis-Faisal-thumb.jpg",
+  "SMYA": "https://cse.sds.bracu.ac.bd/storage/media/1013/conversions/ND-127889-A-thumb.jpg",
+  "ZBH": "https://cse.sds.bracu.ac.bd/storage/media/639/conversions/IMG_4627-thumb.jpeg",
+  "ANKH": "https://cse.sds.bracu.ac.bd/storage/media/853/conversions/Anika_Ahmed-thumb.jpeg",
+  "CNKY": "https://cse.sds.bracu.ac.bd/storage/media/974/conversions/IMG_20250331_131743114_HDR-thumb.jpg",
+  "CEAS": "https://cse.sds.bracu.ac.bd/storage/media/984/conversions/20250528_190447-thumb.jpg",
+  "AAF": "https://cse.sds.bracu.ac.bd/storage/media/432/conversions/resize-1702065788195768208IMG20230208WA000701-thumb.jpeg",
+  "ADD": "https://cse.sds.bracu.ac.bd/storage/media/515/conversions/AYESHA-SIDDIKA-thumb.jpg",
+  "MKY": "https://cse.sds.bracu.ac.bd/storage/media/796/conversions/cd-259040-thumb.jpg",
+  "AKHD": "https://cse.sds.bracu.ac.bd/storage/media/772/conversions/Abdullah-Khondoker-thumb.jpeg",
+  "ANV": "https://cse.sds.bracu.ac.bd/storage/media/1014/conversions/rsz_20251226_165734-v1-thumb.jpg",
+  "AOHE": "https://cse.sds.bracu.ac.bd/storage/media/824/conversions/Abu-Obaida-Hasme-thumb.jpg",
+  "ASMN": "https://cse.sds.bracu.ac.bd/storage/media/746/conversions/IMG_0764-(1)-thumb.png",
+  "MAZW": "https://cse.sds.bracu.ac.bd/storage/media/829/conversions/IMG20250121173235-thumb.jpg",
+  "FDM": "https://cse.sds.bracu.ac.bd/storage/media/651/conversions/profile-img-thumb.jpg",
+  "FUL": "https://cse.sds.bracu.ac.bd/storage/media/850/conversions/shafiDP23-thumb.jpg",
+  "HAS": "https://cse.sds.bracu.ac.bd/storage/media/950/conversions/unnamed-thumb.jpg",
+  "KRP": "https://cse.sds.bracu.ac.bd/storage/media/782/conversions/DSC_3487ccc-(1)-thumb.jpg",
+  "CMHQ": "https://cse.sds.bracu.ac.bd/storage/media/894/conversions/IMG_4577-thumb.jpeg",
+  "KSJ": "https://cse.sds.bracu.ac.bd/storage/media/956/conversions/rsz_77728b5f-3cad-4fb4-a8b8-2f65cab50b3e-thumb.jpg",
+  "LMI": "https://cse.sds.bracu.ac.bd/storage/media/421/conversions/20220131_142010resized3-thumb.jpg",
+  "MAF": "https://cse.sds.bracu.ac.bd/storage/media/687/conversions/asif_image-thumb.png",
+  "CSDM": "https://cse.sds.bracu.ac.bd/storage/media/1015/conversions/Sadduu-thumb.jpg",
+  "CSSA": "https://cse.sds.bracu.ac.bd/storage/media/944/conversions/bd5a81d1-6f22-44c7-8d0e-77b90738bb25-thumb.jpeg",
+  "CMNB": "https://cse.sds.bracu.ac.bd/storage/media/924/conversions/IMG_7467-thumb.jpg",
+  "CAJM": "https://cse.sds.bracu.ac.bd/storage/media/958/conversions/277302287_1819857581537774_8775604598210294567_n-thumb.jpg",
+  "CAYR": "https://cse.sds.bracu.ac.bd/storage/media/898/conversions/Picsart_25-07-25_11-22-45-388-thumb.jpg",
+  "MSDH": "https://cse.sds.bracu.ac.bd/storage/media/826/conversions/IMG_7849-thumb.JPG",
+  "MTJ": "https://cse.sds.bracu.ac.bd/storage/media/749/conversions/dp-(3)-thumb.jpg",
+  "CFTP": "https://cse.sds.bracu.ac.bd/storage/media/904/conversions/PRAPTY-thumb.jpg",
+  "MAFZ": "https://cse.sds.bracu.ac.bd/storage/media/740/conversions/IMG_0542-thumb.jpg",
+  "MZW": "https://cse.sds.bracu.ac.bd/storage/media/739/conversions/Screenshot_1-thumb.png",
+  "CFBB": "https://cse.sds.bracu.ac.bd/storage/media/929/conversions/512924937_2536308553379033_7875072229755086999_n-thumb.jpg",
+  "CMHH": "https://cse.sds.bracu.ac.bd/storage/media/1001/conversions/IMG_4225-thumb.jpg",
+  "NTB": "https://cse.sds.bracu.ac.bd/storage/media/727/conversions/image-1000x1000-thumb.jpg",
+  "CSSN": "https://cse.sds.bracu.ac.bd/storage/media/907/conversions/pfp-thumb.jpg",
+  "NWT": "https://cse.sds.bracu.ac.bd/storage/media/276/conversions/IMG-20221023-WA0002-new-thumb.jpg",
+  "CSJP": "https://cse.sds.bracu.ac.bd/storage/media/981/conversions/Untitled-picture-thumb.png",
+  "PML": "https://cse.sds.bracu.ac.bd/storage/media/214/conversions/Md-Rifat-Alam-Pomil-thumb.jpg",
+  "CQAE": "https://cse.sds.bracu.ac.bd/storage/media/914/conversions/1000005565-thumb.jpg",
+  "CFBH": "https://cse.sds.bracu.ac.bd/storage/media/921/conversions/Farah-Binta-Haque-Photo-thumb.jpg",
+  "CAKM": "https://cse.sds.bracu.ac.bd/storage/media/1032/conversions/555152511_1478897986757712_4259342320498000116_n-(1)-thumb.jpg",
+  "CSFO": "https://cse.sds.bracu.ac.bd/storage/media/900/conversions/IMG_1904-(2)-thumb.jpg",
+  "SJM": "https://cse.sds.bracu.ac.bd/storage/media/873/conversions/Adobe-Express---file-(1)-thumb.jpg",
+  "MRSO": "https://cse.sds.bracu.ac.bd/storage/media/968/conversions/1000022478-thumb.jpg",
+  "SLAR": "https://cse.sds.bracu.ac.bd/storage/media/994/conversions/CanvaEdite-thumb.jpeg",
+  "SSKD": "https://cse.sds.bracu.ac.bd/storage/media/808/conversions/IMG_247011-thumb.JPG",
+  "STV": "https://cse.sds.bracu.ac.bd/storage/media/244/conversions/IMG-20230629-WA0021-thumb.jpg",
+  "TJW": "https://cse.sds.bracu.ac.bd/storage/media/154/conversions/Tajwar_Photo-thumb.png",
+  "TRZA": "https://cse.sds.bracu.ac.bd/storage/media/732/conversions/-jmnvjq_Original-thumb.jpeg",
+  "WLV": "https://cse.sds.bracu.ac.bd/storage/media/952/conversions/imresizer-1730430535595-thumb.jpg",
+  "AHA": "https://cse.sds.bracu.ac.bd/storage/media/933/conversions/DSC_1239-thumb.JPG",
+  "NRT": "https://cse.sds.bracu.ac.bd/storage/media/881/conversions/IMG_7322-thumb.jpeg",
+  "SMDS": "https://cse.sds.bracu.ac.bd/storage/media/966/conversions/IMG_20220302_084903-(1)-thumb.jpg",
+  "RAZW": "https://cse.sds.bracu.ac.bd/storage/media/915/conversions/pic_new-thumb.jpg",
+  "ISR": "https://cse.sds.bracu.ac.bd/storage/media/445/conversions/Picture-thumb.jpg",
+  "IST": "https://cse.sds.bracu.ac.bd/storage/media/1050/conversions/Ishmam-latest-ration-3_4-thumb.jpg",
+  "RBB": "https://cse.sds.bracu.ac.bd/storage/media/736/conversions/NUR02248-Reflection-Removed-thumb.jpeg",
+  "YAI": "https://cse.sds.bracu.ac.bd/storage/media/827/conversions/WhatsApp-Image-2024-07-01-at-2.45.57-AM-thumb.jpeg",
+  "DCO": "https://cse.sds.bracu.ac.bd/storage/media/804/conversions/oie_FA47Tw9KNuhu-(1)-thumb.jpg"
+};
+
+const GID = '1207964579';
+let electiveCourses = [];
+let currentTab = 'ACTIVE';
+
+const COURSE_DESCRIPTIONS = {
+  "CSE101": "CSE 473: Financial Engineering & Technology (3 credits)\nCSE 474: Simulation and Modeling (3 credits)\nCSE 490: WAN Routing and Technologies (Special Topics) (3 credits)\nCSE 490: Special Topics (3 credits)\nCSE 491: Independent Study (3 credits)",
+  "CSE310": "An introduction to object oriented programming using. Java is the language typically used to illustrate the concepts, but another suitable language may be substituted by the instructor. Topics covered include object instances, classes, inheritance, polymorphism and abstraction mechanism. Problem domain analysis and system design using object oriented approach. Object oriented database and object persistency. Software principles for object oriented approach. Advantages and problems with using object oriented approach to developing systems. The course includes a compulsory 3 hour laboratory work each week.\n(Pre req. CSE 111)",
+  "CSE342": "CSE 473: Financial Engineering & Technology (3 credits)\nCSE 474: Simulation and Modeling (3 credits)\nCSE 490: WAN Routing and Technologies (Special Topics) (3 credits)\nCSE 490: Special Topics (3 credits)\nCSE 491: Independent Study (3 credits)",
+  "CSE360": "Interface components and their characteristics, micro processor I/O. Disk, Drums and Printers. Optical displays and sensors. High power interface devices, transducers, stepper motors and peripheral devices. The course includes a compulsory 3 hour laboratory work alternate week.\n(Pre req. CSE 341)",
+  "CSE371": "CSE 473: Financial Engineering & Technology (3 credits)\nCSE 474: Simulation and Modeling (3 credits)\nCSE 490: WAN Routing and Technologies (Special Topics) (3 credits)\nCSE 490: Special Topics (3 credits)\nCSE 491: Independent Study (3 credits)",
+  "CSE390": "CSE 473: Financial Engineering & Technology (3 credits)\nCSE 474: Simulation and Modeling (3 credits)\nCSE 490: WAN Routing and Technologies (Special Topics) (3 credits)\nCSE 490: Special Topics (3 credits)\nCSE 491: Independent Study (3 credits)",
+  "CSE391": "A survey of current Internet technologies and state-of-the-art web programming methods. Using client/server structures, topics studied will be drawn from JavaScript, JSP, ASP, Cold Fusion, Flash, Document Object Model, HTML, Cascading Style Sheets, XML, CGI, TCP/IP and the .NET platform. Programming tools may include PERL, various UNIX shell scripts, Windows batch files, Java and other languages as needed.",
+  "CSE392": "CSE 473: Financial Engineering & Technology (3 credits)\nCSE 474: Simulation and Modeling (3 credits)\nCSE 490: WAN Routing and Technologies (Special Topics) (3 credits)\nCSE 490: Special Topics (3 credits)\nCSE 491: Independent Study (3 credits)",
+  "CSE410": "CSE 473: Financial Engineering & Technology (3 credits)\nCSE 474: Simulation and Modeling (3 credits)\nCSE 490: WAN Routing and Technologies (Special Topics) (3 credits)\nCSE 490: Special Topics (3 credits)\nCSE 491: Independent Study (3 credits)",
+  "CSE419": "An introduction to the principles of functional, imperative, and logic programming languages. Topics covered include meta-circular interpreters, semantics (operational and denotational), type systems (polymorphism, inference, and abstract types), object-oriented programming, modules, and multiprocessing; case studies of contemporary programming languages. Programming experience and background in language implementation required.",
+  "CSE424": "Introduction to pattern recognition: features, classifications, learning. Statistical methods, structural methods and hybrid method. Applications to speech recognition, remote sensing and biomedical area. Learning algorithms, Syntactic approach: Introduction to pattern grammars and languages. Parsing techniques. Pattern recognition in computer aided design. The course includes a compulsory 3 hour laboratory work alternate week.",
+  "CSE425": "An extensive course on neural network architectures and learning algorithms with theory and applications. Temporal and optimal linear associative memories, fuzzy control. Cohen-Grossberg theorem. Unsupervised learning. Higher-order competitive, differential Hebbian learning networks. Supervised learning. Adaptive estimation and stochastic approximation. Adaptive vector quantization, mean-square approach. Kohonen self-organizing maps. Grossberg theory. Simulated annealing. Boltzman and Cauchy learning. Adaptive resonance. Gabor functions and networks.",
+  "CSE426": "Graphs and simple graphs, diagraphs, subgraphs, vertex-degrees, walks,, paths and cycles; trees, spanning trees in graphs, distance in graphs; Complementary graphs, cut-vertices, bridges and blocks, k-connected graphs; Euler tours, Hamiltonian cycles, Chinese Postman Problem, Traveling Salesman Problem; Chromatic number, Chromatic polynomials, chromatic index, Vizing's theorem, planar graphs, perfect graphs.",
+  "CSE427": "Introduction to machine learning; Supervised and reinforcement learning; Unsupervised learning algorithms; Attribute based and relational supervised learning algorithms; Neural network based learning algorithms; Genetic algorithm and genetic programming; Reinforcement learning algorithms; Computational learning theory.",
+  "CSE428": "Digital image fundamentals, perception, representation; image transforms; First Fourier Transform (FFT), Discrete Cosine Transform (DCT), Karhumen and Loeve Transform (KLT), Wavelet transform and sub-band decomposition; image enhancement and restoration techniques, image compression techniques, image compression standards: JPEG, MPEG, H.261, and H.263.",
+  "CSE429": "Multimedia System- Introduction; Coding of compression standards; Architecture issues in multimedia; Operating System issues in multimedia- real-time OS issues, synchronization, interrupt handling; Database issues in multimedia- indexing and storing multimedia data, disk placement, disk scheduling, searching for a multimedia document; Networking issues in multimedia- Quality-of service guarantees, resource reservation, traffic specification, happing and monitoring, admission control; Security issues in multimedia- digital water-marking, partial encryption schemes for video streams; Multimedia application- audio and video conferencing, video on demand, voice over IP. Concepts covered in lecture applied in computer laboratory assignments.",
+  "CSE430": "Introduction to Digital Signal Processing, Filtering, Frequency response, Sampling theory, Z-transform, Discrete Fourier Transform (DFT), Fast Fourier Transform (FFT), Windowing, Correlation & Convolution, Application of Digital Signal Processing. Introduction to Digital Filters, Finite Impulse Response (FIR), Infinite Impulse Response (IIR), Different techniques of FIR and IIR filter design. MATLAB application to DSP; the course includes a compulsory 3-hour laboratory work each week. (Pre req. CSE 111 and MAT120)",
+  "CSE431": "Introduction to the field of natural language processing (NLP)- the creation of computer programs that can understand, generate, and learn natural language. The topics include the three major subfields of NLP: syntax (the structure of an utterance), semantics (the truth-functional meaning of an untterance), and pragmatics/discourse (the context-dependent meaning of an utterance). The course will introduce both knowledge-based and statistical methods for NLP, and will illustrate the use of such methods in a variety of of text- and speech-based application areas.",
+  "CSE432": "Introduction to automatic speech recognition, speech understanding and speech synthesis/text-to-speech from the computer science and linguistics perspective. Focus on understanding of key algorithms including noisy channel model, Hidden Markov Models (HMMs), A* and Viterbi decoding, N-gram language modeling, unit selection synthesis, and roles of linguistic knowledge (especially phonetics, intonation, pronunciation variation, disfluencies).",
+  "CSE460": "Design and analysis techniques fro VLSI circuits. Design reliable VLSI circuits, noise considerations, design and operation of large fan out and fan in circuits, clocking methodologies, techniques for data path and data control design. Simulation techniques. Parallel processing, spatial purpose architectures in VLSI. VLSI layouts partitioning and placement routing and wiring in VLSI. Reliability aspects of VLSI design. The course includes a compulsory 3 hour laboratory work alternate week.",
+  "CSE461": "Design using MSI and LSI components. Design of memory subsystem using SRAM and DRAM. Design of various components of a computer: ALU, memory and control unit: hardwired and micro programmed. Microprocessor based designs. Computer bus standards. Design using special purpose controllers, floppy disk controller. Digital control system. Computes in telecommunication and control. The course includes a compulsory 3 hour laboratory work each week.",
+  "CSE462": "Introduction to Fault Tolerant Systems and Architectures. Fault detection and location in combinational and sequential circuits; Fault test generation for combinational and sequential circuits; Digital simulation as a diagnostic tool. Automatic test pattern generator, memory test pattern and reliability. Performance monitoring self checking circuits, Burst error correction and Triple modular redundancy; Maintenance",
+  "CSE470": "Concepts of software engineering: requirements definition, modular, structure design, data specifications, functional specifications, verification, documentation, software maintenance, Software support tools. Software project organization, quality assurance, management and communication skills.",
+  "CSE471": "Introduces students to tools and techniques in systems analysis and design such as data flow diagram and E-R diagrams. Projects by students where they analyse and design a system using these tools. The course includes a compulsory 3 hour laboratory work each week.",
+  "CSE472": "An introduction to the concepts for human and computer interface. The importance of computer interface, interface quality and methods of evaluation. The relationship of interface quality to interactions with the computer. Interface design, dimensions of interface variability, dialogue tools and techniques, user centered design and task analysis. User interface implementation, I/O devices and user interface for groupware, multimedia systems and visualization. Student will have to submit four assignments on multimedia work in the lab.(Pre req. CSE 221)",
+  "CSE473": "This course aims in teaching the integration of business and technical consideration in the design, implementation and management of information systems. Topics include: Is planning and development, business, management, executive, and strategic information systems, including case studies of selected large disaster planning and recovery. The course also includes practical examples of information systems industry.",
+  "CSE110": "This course would be an introduction to the foundations of computation and purpose of mechanized computation. Emphasis will be placed on techniques of problem analysis and the development of algorithms and programs. Topics will include:",
+  "CSE111": "This course would be an introduction to data structures, formal specification of syntax, elements of language theory and mathematical preliminaries. Other topics that would be covered are formal languages, structured programming concepts, survey of features of existing high level languages. Students would design and write application using an appropriate language.",
+  "CSE220": "Introduction to widely used and effective methods of data organisation, focussing on data structures, their algorithms and the performance of these algorithms. Concepts and examples, elementary data objects, elementary data structures, arrays, lists, stacks, queues, graphs, trees, compound structures, data abstraction and primitive operations on these structures. memory management; sorting and searching; hash techniques; Introduction to the fundamental algorithms and data structures: recursion, backtrack search, lists, stacks, queues, trees, operation on sets, priority queues, graph dictionary. Introduction to the analysis of algorithms to process the basic structures. A brief introduction to database systems and the analysis of data structure performance and use in these systems. The course includes a compulsory 3 hour laboratory work alternate week.(Pre req. CSE 111)",
+  "CSE221": "The study of efficient algorithms and effective algorithm design techniques. Techniques for analysis of algorithms, Methods for the design of efficient algorithms :Divide and Conquer paradigm, Greedy method, Dynamic programming, Backtracking, Basic search and traversal techniques, Graph algorithms, Elementary parallel algorithms, Algebraic simplification and transformations, Lower bound theory, NP-hard and NP-complete problems. Techniques for the design and analysis of efficient algorithms, Emphasising methods useful in practice. sorting; Data structures for sets: Heaps, Hashing; Graph algorithms: Shortest paths, Depth-first search, Network flow, Computational geometry; Integer arithmetic: gcd, primality; polynomial and matrix calculations; amortised analysis; Performance bounds, asymptotic and analysis, worst case and average case behaviour, correctness and complexity. Particular classes of algorithms such as sorting and searching are studied in detail. The course includes a compulsory 3 hour laboratory work alternate week. ( Pre req. CSE 220 )",
+  "CSE230": "Set theory, Elementary number theory, Graph theory, Paths and trees, Boolean Algebra, Binary Relations, Functions, Algebraic system, Generating functions, Induction, Reduction, Semigroup, Permutation groups, Discrete Probability, Mathematical logic, Prepositional calculus and Predicate calculus.\n\nSuggested Books:",
+  "CSE250": "Fundamental electrical concepts and measuring units. Direct current: voltage, current, resistance and power. Laws of electrical circuits and methods of network analysis; Introduction to magnetic circuits. Alternating current: instantaneous and r.m.s. current, voltage and power, average power for various combinations of R, L and C circuits, phasor representation of sinusoidal quantities. The course includes a compulsory 3 hour laboratory work alternate week.\n(Pre req. PHY 112 or appropriate experience in electronic circuits)\n\nSuggested Books:",
+  "CSE251": "Introduction to semiconductors, p-type and n-type semiconductors; p-n junction diode characteristics; Diode applications: half and full wave rectifiers, clipping and clamping circuits, regulated power supply using zener diode.Bipolar Junction Transistor (BJT): principle of operation, I-V characteristics; Transistor circuit configurations (CE, CB, CC), BJT biasing, load lines; BJTs at low frequencies; Hybrid model, h parameters, simplified hybrid model; Small-signal analysis of single and multi-stage amplifiers, frequency response of BJT amplifier. Field Effect Transistors (FET): principle of operation of JFET and MOSFET; Depletion and enhancement type NMOS and PMOS; biasing of FETs; Low and high frequency models of FETs, Switching circuits using FETs; Introduction to CMOS. Operational Amplifiers (OPAMP) : linear applications of OPAMPs, gain, input and output impedances, active filters, frequency response and noise.Introduction to feedback, Oscillators, Silicon Controlled Rectifiers (SCR), TRIAC, DIAC and UJT: characteristics and applications; Introduction to IC fabrication processes. The course includes a compulsory 3 hour laboratory work alternate week.\n(Pre req.: CSE 250)",
+  "CSE260": "An introduction to digital systems such as computer, communication and information systems. Topics covered include Boolean algebra, digital logic gates, combinational logic circuits, decoders, encoders, multiplexers. Asynchronous and synchronous counters. Registers, flip-flops, adders, Sequential circuit analysis and design. Simple computer architecture. The course includes a compulsory 3 hour laboratory work each week.",
+  "CSE320": "Introduction to purpose and methods of communication. Necessity for modulation and techniques. Technical aspects of data communications. Effects of noise and control. Basic concepts such as fundamental limits, encoding, modulation, multiplexing, error detection and control. Topics include: Data Transmission Protocols, different layers in data communication systems, LANs, WANs linked with telephony. This course will include a compulsory 3-hour laboratory work each week for those interested in obtaining the CCNA certification.",
+  "CSE321": "Principles of operating systems: design objects; sequential process; concurrent processes, functional mutual exclusion, processor co-operation and deadlocks, management. Control and scheduling of large information processing systems. Dispatching processor access methods, job control languages memory addressing, paging and store multiplexing, and time sharing, batch processing. Scheduling algorithms, file systems, and security; semaphores and critical sections, device drivers, multiprocessing, sharing, design and implementation methodology, performance evaluation and case studies. The course includes a compulsory 3 hour laboratory work each week.\n(Pre req.: CSE 221)",
+  "CSE330": "Computer Arithmetic: floating point representation of numbers, arithmetic operations with normalized floating point numbers; Iterative methods: different iterative methods for finding the roots of an equation and their computer implementation; Solution of simultaneous Algebraic Equations, Gauss elimination; Interpolation, Least square approximation of functions, Taylor series representation, Chebyshev series; Numerical differentiation and integration and Numerical Solution of Differential Equations.\n( Pre req.: MAT 120)",
+  "CSE331": "An introduction to finite representation of infinite objects and basic mathematical models of computation. Finite automata and regular languages, pushdown automata and context free languages. Turing machines. Church's Thesis. Partial recursive functions. Undecidability. Reducibility and completeness. Halting problem. Time complexity and NP-completeness. Probabilistic computation. Interactive proof systems. (Pre req.: CSE 221)",
+  "CSE340": "A systematic study of the various elements in computer design, including circuit design, storage mechanisms, addressing schemes, and various approaches to parallelism and distributed logic. Information representation and transfer; instruction and data access methods; the control unit; hardware and microprogrammed; memory organisation. RISC and CSEC machines. (Pre req. CSE 260)",
+  "CSE341": "Introduction to different types of microprocessors. Microprocessor architecture, instruction set, interfacing/O operation, interrupt structure, DMA. Microprocessor interface ICs. Advanced microprocessor concept of microprocessor based system design.",
+  "CSE350": "Diode logic gates, transistor switches, transistor gates, MOS gates, Logic families: TTL, ECL, IIL and CMOS logic with operation details. Propagation delay, product and noise immunity. Open collector and High impedance gates. Electronic circuits for flip flops, counters and register, memory systems. PLA's (A/D, D/A converters with applications, S/H circuits) LED, LCD and optically coupled oscillators. Non-linear applications of OPAMPs. Analog switches. Linear wave shaping: diode wave shaping techniques, clipping and clamping circuits, comparator circuits, switching circuits. Pulse transformers, pulse transmission. Pulse generation:monostable, bistable and stable multivibrations, Timing circuits. Simple voltage sweeps, linear circuit sweeps. Schmitrigger, blocking oscillators and time base circuit. The course includes a compulsory 3 hour laboratory work each week.(Pre req. CSE 251, CSE 260)",
+  "CSE370": "Introduction to concepts and methods for storing and manipulating data in stored form. File retrieval and organisation. Database models and designing of database systems. The principles of database management systems. Relational database management systems. Query formulation and language. Database administration. Methods used for the storage, selection and presentation of Data. Database integrity and security. Students will work with database languages and popular application packages. Common database management systems. Structure of SQL and principals behind the design of SQL. Students must complete four SQL assignments in the lab. The course includes a compulsory 3 hour laboratory work each week.",
+  "CSE420": "Theory and Practice; An introduction to compiler and interpreter design, with emphasis on practical solutions using compiler writing tools such as Yacc in UNIX, and the C programming language, Topics covered include: lexical scanners, context free languages and pushdown automata, recursive descent parsing, bottom up parsing, attributed grammars, symbol table design, run time memory allocation, machine language, code generation and optimisation. The course includes a compulsory 3 hour laboratory work alternate week.",
+  "CSE421": "An introduction to the basics of transport connections and sessions. The protocol hierarchy, design issues in transport and session layer protocol, end-to-end protocols, message handling protocols, terminal and file transfer protocols, Internet TCP/IP protocols. End to end data networks, congestion control networks, wireless networks, mobile computing, high speed networks. Concurrent programming, data link layer, framing and error control, media access control. Models of distributed computation, management and resource control of networks and distributed operating systems, distributed file systems, caching scheduling, process migration. Fault tolerance, network security and privacy, algorithm for deadlock detection. Synchronization and concurrency control in distributed systems. The course includes a compulsory 3-hour laboratory work each week if the student wishes to obtain CCNA certification. Otherwise the course includes a compulsory 3-hour laboratory work alternate week.",
+  "CSE422": "Survey of concepts in artificial intelligence. Knowledge representation, search and Control techniques. AI machines and features of LISP and PROLOG languages. Problem Representation; search, constraint propagation, rule chaining, frame inheritance, inference and learning in intelligent systems; systems for general problems solving, game playing, expert consultation, concept formation and natural languages processing; recognition, understanding and translation. Use of heuristic vs. algorithmic programming; cognitive simulations - vs. machine intelligence; study of some expert systems such as robotics and understanding. Solving problems in Al languages. The course includes a compulsory 3 hour laboratory work each week.",
+  "CSE423": "Introduction to Graphical data processing. Fundamentals of interactive graphics Architecture of display devices and connectivity to a computer. Implementation of graphics concepts of two dimensional and three dimensional viewing, clipping and transformations. Hidden line algorithms. Raster graphics concepts: Architecture,",
+  "CSE474": "Simulation methods, model building, random number generator, statistical analysis of results, validation and verification techniques. Digital simulation of continuous system. Simulation and analytical methods for analysis of computer system and practical problems in business and practice. Introduction to the simulation packages. The course includes a compulsory 3 hour laboratory work alternate week.",
+  "CSE490": "The course focuses on advanced IP addressing techniques (Variable Length Subnet Masking [VLSM]), intermediate routing protocols (RIP v2, single-area OSPF, EIGRP), command-line interface configuration of switches, Ethernet switching, Virtual LANs (VLANs), Spanning Tree Protocol (STP), and VLAN Trunking Protocol (VTP). The course will also focus on advanced IP addressing techniques (Network Address Translation [NAT], Port Address Translation [PAT], and DHCP), WAN technology and terminology, PPP, ISDN, DDR, Frame Relay, network management, and introduction to optical networking. The course includes a compulsory 3-hour laboratory work each week if the student wishes to obtain CCNA certification.",
+  "CSE491": "For students interested in any of the following ways of studying Computer Science & Engineering: independently exploring an advanced topic under a faculty instructor; conducting significant research under a faculty supervisor; or doing an internship in industry under the supervision of industry and faculty advisors. In each case, the student must first identify a faculty member within the CSE department to oversee his/her work, and then write a proposal to the department chair outlining the means and objectives of the project. The proposal must be approved by the intended faculty supervisor and department chair prior to commencement of the term. At the end of the term, the student must submit a detailed report and/or give a presentation of the results, before the final course grade may be awarded.",
+  "CSE402": "Introduction to linear and non-linear optimization techniques, linear programming, simplex method, duality, convex optimization, integer programming, and application of optimization algorithms to computer science and engineering problems.",
+  "CSE433": "Applications of machine learning in clinical medicine, medical imaging, electronic health records (EHR) analysis, predictive modeling of patient outcomes, genomic data analysis, and ethical issues in medical AI.",
+  "CSE434": "Introduction to machine learning techniques in quantitative finance, portfolio optimization, algorithmic trading, credit scoring, risk management, sentiment analysis on financial news, and fraud detection.",
+  "CSE435": "Foundations of reinforcement learning, Markov Decision Processes (MDPs), dynamic programming, temporal difference learning, Q-learning, deep reinforcement learning, policy gradients, and applications in robotics, control systems, and games.",
+  "CSE437": "Practical data science course focusing on fetching, cleaning, and preprocessing messy real-world data, exploratory data analysis (EDA), feature engineering, modeling, and deploying data pipelines.",
+  "CSE438": "Hands-on data science applications focusing on industry-standard methodologies, model validation, pipeline automation, deployment, A/B testing, and business impact analysis of data models.",
+  "CSE439": "Methods and algorithms for enabling computers to interpret visual information from the world, including camera models, calibration, image filtering, feature detection, stereo vision, and tracking.",
+  "CSE440": "Advanced topics in natural language processing, deep learning models for NLP, transformers, attention mechanisms, machine translation, text generation, sentiment analysis, and question answering systems.",
+  "CSE441": "Advanced topics in machine learning including deep learning, unsupervised learning, generative adversarial networks (GANs), probabilistic graphical models, ensemble methods, and optimization algorithms.",
+  "CSE442": "Designing and developing user interfaces powered by natural language, conversational agents, chatbots, voice user interfaces (VUIs), semantic parsing, and evaluation of user experience in voice and text interfaces.",
+  "CSE443": "Introduction to computational methods in biology, DNA/RNA sequence analysis, sequence alignment algorithms (Needleman-Wunsch, Smith-Waterman), database searching (BLAST), and phylogenetic tree construction.",
+  "CSE444": "Advanced bioinformatics including structural bioinformatics, protein structure prediction, gene expression analysis, microarray data, molecular dynamics, and biological network modeling.",
+  "CSE445": "Statistical methods for data analysis, hypothesis testing, analysis of variance (ANOVA), linear and logistic regression, non-parametric methods, and probability distributions applied to data science.",
+  "CSE446": "Cryptographic fundamentals of blockchain, consensus mechanisms (Proof of Work, Proof of Stake), smart contracts, Bitcoin, Ethereum, decentralized applications (dApps), security, and scalability.",
+  "CSE447": "Introduction to cryptography, symmetric and asymmetric key systems, RSA, AES, cryptographic hash functions, digital signatures, cryptoanalysis techniques, and network security protocols.",
+  "CSE449": "Fundamentals of high-performance computing, parallel architectures, programming models (MPI, OpenMP), GPU programming (CUDA), distributed systems, and performance tuning.",
+  "CSE450": "Advanced algorithms and data structures for competitive programming. Topics include advanced graph theory, dynamic programming optimizations, string processing (KMP, suffix trees), network flow, and math algorithms.",
+  "CSE451": "Study of complex network structures, graphs, scale-free networks, small-world networks, social networks, centrality measures, network flow, and epidemic spreading models.",
+  "CSE452": "Formal languages, Turing machines, decidability, halting problem, complexity classes (P, NP, NP-complete), reduction techniques, and theoretical limits of computation.",
+  "CSE453": "Advanced automata theory, context-sensitive grammars, Chomsky hierarchy, Turing machine variants, complexity classes, randomized complexity, and interactive proof systems.",
+  "CSE454": "Deep dive into complexity theory, space complexity, hierarchy theorems, probabilistic computation, circuit complexity, approximability, and PCP theorem.",
+  "CSE455": "Specialized lectures on contemporary topics in theoretical computer science, including quantum algorithms, computational geometry, online algorithms, and cryptography.",
+  "CSE456": "Rigorous study of algorithm design paradigms, divide-and-conquer, greedy, dynamic programming, amortization, graph algorithms, NP-completeness, and approximation algorithms.",
+  "CSE457": "Introduction to design and analysis of algorithms that use randomness, probability theory in computer science, randomized quicksort, min-cut, hashing, and Markov chains.",
+  "CSE458": "Computational complexity in the quantum paradigm, quantum Turing machines, BQP, BPP, QMA complexity classes, quantum query complexity, and theoretical bounds of quantum computers.",
+  "CSE459": "Computational algorithms for analyzing molecular biology data, gene mapping, genome assembly, RNA secondary structure prediction, and biological sequence comparison.",
+  "CSE463": "Introduction to image processing and computer vision, camera models, image transforms, edge detection, feature extraction, object recognition, deep learning in vision, and motion tracking.",
+  "CSE481": "Foundations of quantum computing, qubits, quantum states, superposition, entanglement, quantum gates, quantum circuits, Deutsch-Jozsa algorithm, and Simon's algorithm.",
+  "CSE482": "Intermediate quantum computing, Shor's factoring algorithm, Grover's search algorithm, quantum error correction, quantum protocols, and physical implementation of quantum computers.",
+  "CSE483": "Advanced software engineering practices, agile methodologies, software architecture, design patterns, testing, continuous integration and deployment (CI/CD), devops, and software quality assurance.",
+  "CSE484": "Fundamentals of cloud computing, virtualization, cloud service models (IaaS, PaaS, SaaS), cloud storage, architectures (AWS, Azure, GCP), load balancing, and scalability.",
+  "CSE485": "Advanced cloud topics including hybrid clouds, containerization (Docker, Kubernetes), microservices architecture, serverless computing, cloud security, and disaster recovery.",
+  "CSE486": "Advanced networking, routing protocols (OSPF, EIGRP, BGP), WAN technologies, switching concepts, VLANs, STP, and enterprise network design.",
+  "CSE487": "Design and development of web services, RESTful APIs, SOAP, XML, JSON, microservices communication, service-oriented architecture (SOA), API gateways, and web security.",
+  "CSE488": "Modern web architecture focusing on microservices patterns, serverless computing (AWS Lambda, Cloud Functions), message queues, event-driven design, and API orchestration.",
+  "CSE489": "Mobile application development for the Android platform. Covers the Android SDK, UI layout design, activities, services, broadcast receivers, SQLite/Room local storage, network operations, and App Store publishing.",
+  "CSE490A": "Introduction to gamification theory, design frameworks, user motivation, game mechanics, feedback loops, and applications of game design elements in non-game contexts.",
+  "CSE490B": "Foundations of computer and network security, threat modeling, cryptography, authentication, network defense, web security, vulnerability analysis, and security policies.",
+  "CSE490C": "Advanced topics in quantum computation and information, quantum complexity theory, fault-tolerant quantum computing, quantum algorithms for machine learning, and quantum cryptography.",
+  "CSE490D": "Application of data science and analytics to football (soccer) data. Covers player tracking, event data analysis, performance metrics, tactical modeling, and prediction models using Python.",
+  "CSE492": "Mobile app development for the iOS platform using Swift and Xcode. Covers UI design with SwiftUI, view controllers, local storage (CoreData/SwiftData), network requests, and App Store guidelines.",
+  "CSE493": "Architectural patterns for enterprise systems, scalability, reliability, domain-driven design (DDD), database integration, message brokers, caching, and designing high-performance architectures.",
+  "CSE494": "Advanced topics in robotics, robot kinematics, dynamics, path planning, localization and mapping (SLAM), sensor fusion, and autonomous control systems.",
+  "CSE495": "Introduction to IoT architectures, microcontrollers (Arduino, Raspberry Pi), sensor interfacing, communication protocols (MQTT, HTTP, CoAP), cloud integration, and IoT security.",
+  "CSE496": "Penetration testing and ethical hacking techniques, footprinting, scanning networks, system hacking, web application attacks, wireless security, and counter-measures.",
+  "CSE497": "Introduction to computational models of human cognition, learning, perception, decision-making, probabilistic models of cognition, and artificial neural networks mirroring human brain functions.",
+  "CSE498": "Advanced computer graphics techniques, 3D rendering pipeline, ray tracing, global illumination, shaders, texture mapping, physical simulation, and GPU programming.",
+  "CSE499": "Architecture of e-commerce systems, online payment gateways, security, marketing strategies, recommendations engines, logistics, and legal and ethical considerations in online commerce.",
+  "CSE500": "Exploration of ethical, legal, and social implications of data collection, algorithm design, machine learning models, privacy, algorithmic bias, fairness, and accountability in technology.",
+  "CSE502": "Bridging scientific research and commercial impact, entrepreneurship, product development, technology transfer, funding, and scaling innovations in engineering and computer science.",
+  "CSE503": "Software project management, estimation, risk management, scheduling, team dynamics, quality metrics, and standard engineering processes in computer science projects.",
+  "CSE504": "Practical workshop on startup creation, business models, intellectual property, pitching to investors, market validation, and commercialization strategies.",
+  "CSE505": "Legal aspects of intellectual property, understanding patents, copyrights, trademarks, licensing, trade secrets, and IP strategies for tech innovators.",
+  "CSE506": "Ethical responsibilities of engineers and scientists, professional codes of conduct, workplace ethics, safety, environmental impact, and whistleblowing.",
+  "CSE507": "Design thinking methodology, empathy mapping, ideation, prototyping, testing, user-centered design, and driving innovation in engineering problem solving.",
+  "CSE586": "Modern full-stack web development, single page applications (SPAs), state management, server-side rendering (SSR), backend frameworks, database design, caching, and web performance optimization."
+};
+
+
+function parseCSV(text){
+  const rows = [];
+  let i = 0, n = text.length;
+  while(i < n){
+    const row = [];
+    while(i < n && text[i] !== '\n'){
+      if(text[i] === '"'){
+        i++;
+        let cell = '';
+        while(i < n){
+          if(text[i] === '"' && text[i+1] === '"'){ cell += '"'; i += 2; }
+          else if(text[i] === '"'){ i++; break; }
+          else cell += text[i++];
+        }
+        row.push(cell);
+        if(i < n && text[i] === ',') i++;
+      } else {
+        let cell = '';
+        while(i < n && text[i] !== ',' && text[i] !== '\n') cell += text[i++];
+        row.push(cell);
+        if(i < n && text[i] === ',') i++;
+      }
+    }
+    if(i < n && text[i] === '\n') i++;
+    if(row.length && row.some(c => c.trim())) rows.push(row);
+  }
+  return rows;
+}
+
+async function fetchSheetData() {
+  const statusEl = document.getElementById('status');
+  const countEl = document.getElementById('dir-count');
+  statusEl.innerHTML = `<span class="spinner"></span>Fetching latest elective course list...`;
+  
+  try {
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`;
+    const r = await fetch(url);
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    const rawText = await r.text();
+    const rows = parseCSV(rawText);
+    
+    // Skip header row
+    for(let i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      // Expect course code in r[2], offered state in r[1]
+      if (r[2] && r[2].trim()) {
+        const initialsStr = (r[7] || '').trim();
+        const namesStr = (r[8] || '').trim();
+        const emailsStr = (r[9] || '').trim();
+        
+        const initials = initialsStr ? initialsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+        const names = namesStr ? namesStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+        const emails = emailsStr ? emailsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+        
+        const faculties = [];
+        const maxLen = Math.max(initials.length, names.length, emails.length);
+        for(let j = 0; j < maxLen; j++) {
+          faculties.push({
+            initial: initials[j] || '',
+            name: names[j] || '',
+            email: emails[j] || ''
+          });
+        }
+        
+        electiveCourses.push({
+          offered: (r[1] || '').trim().toUpperCase(),
+          code: r[2].trim(),
+          title: (r[3] || '').trim(),
+          outline: (r[4] || '').trim(),
+          remarks: (r[5] || '').trim(),
+          prerequisite: (r[6] || '').trim(),
+          faculties: faculties
+        });
+      }
+    }
+    
+    statusEl.innerHTML = '';
+    renderElectives();
+  } catch(e) {
+    statusEl.textContent = 'Could not load elective course database. Please check your network connection.';
+    statusEl.className = 'error';
+    countEl.textContent = 'Failed to load.';
+    console.error(e);
+  }
+}
+
+function renderElectives() {
+  const grid = document.getElementById('electives-grid');
+  const countEl = document.getElementById('dir-count');
+  const query = document.getElementById('search-input').value.trim().toLowerCase();
+  
+  const filtered = electiveCourses.filter(c => {
+    // 1. Filter by Tab (Active vs Inactive)
+    if(c.offered !== currentTab) return false;
+    
+    // 2. Filter by search query
+    if(!query) return true;
+    
+    const matchCode = c.code.toLowerCase().includes(query);
+    const matchTitle = c.title.toLowerCase().includes(query);
+    const matchPrereq = c.prerequisite.toLowerCase().includes(query);
+    const matchFaculty = c.faculties.some(f => 
+      f.initial.toLowerCase().includes(query) || f.name.toLowerCase().includes(query)
+    );
+    
+    return matchCode || matchTitle || matchPrereq || matchFaculty;
+  });
+  
+  const label = currentTab === 'ACTIVE' ? 'active' : 'inactive';
+  countEl.textContent = `${filtered.length} ${label} elective course${filtered.length !== 1 ? 's' : ''} found ${query ? 'matching search' : ''}`;
+  
+  if(!filtered.length) {
+    grid.innerHTML = '<div class="dir-empty">No elective courses found matching criteria.</div>';
+    return;
+  }
+  
+  grid.innerHTML = filtered.map((c, i) => {
+    const facultyCount = c.faculties.length;
+    const prereqText = c.prerequisite ? c.prerequisite : 'None';
+    
+    return `
+      <div class="elective-card" onclick="openDetails('${c.code.replace(/'/g, "\\'")}')">
+        <div>
+          <div class="card-header">
+            <span class="course-code">${esc(c.code)}</span>
+            <span class="status-pill ${c.offered.toLowerCase()}">${esc(c.offered)}</span>
+          </div>
+          <div class="course-title">${esc(c.title)}</div>
+        </div>
+        <div class="card-details">
+          <div class="detail-item">
+            <span class="detail-icon">⚙️</span>
+            <span>Prerequisite: <strong>${esc(prereqText)}</strong></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-icon">👥</span>
+            <span>${facultyCount} Potential Faculty member${facultyCount !== 1 ? 's' : ''}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openDetails(code) {
+  const c = electiveCourses.find(x => x.code === code);
+  if(!c) return;
+  
+  const modalContent = document.getElementById('modal-content');
+  const prereqText = c.prerequisite ? c.prerequisite : 'None';
+  const descText = COURSE_DESCRIPTIONS[c.code] || "No course description available.";
+  
+  // Faculty List Markup
+  let facultyMarkup = '';
+  if (c.faculties.length > 0) {
+    facultyMarkup = `<div class="faculty-list">` + c.faculties.map(f => {
+      const picUrl=FACULTY_PICS[f.initial]||'';
+      const initialHtml=picUrl?`<img src="${picUrl}" alt="${esc(f.initial)}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"/>`:esc(f.initial);
+      return `
+      <div class="fac-row" onclick="viewFaculty('${esc(f.initial)}')">
+        <div class="fac-left">
+          <div class="fac-initial">${initialHtml}</div>
+          <div class="fac-name">${esc(f.name)}</div>
+        </div>
+        ${f.email ? `
+          <a class="email-btn" href="mailto:${esc(f.email)}" title="Email ${esc(f.name)}" aria-label="Email" onclick="event.stopPropagation()">
+            ✉️
+          </a>
+        ` : ''}
+      </div>`;
+    }).join('') + `</div>`;
+  } else {
+    facultyMarkup = `<div class="info-value empty">No specific faculty member listed for this course.</div>`;
+  }
+  
+  // Outline Action
+  let outlineMarkup = `<div class="info-value">${esc(c.outline || 'No course outline specified.')}</div>`;
+  if (c.outline && c.outline.startsWith('http')) {
+    outlineMarkup = `
+      <div class="outline-box">
+        <span class="outline-text">Click to open official course outline</span>
+        <a class="outline-btn" href="${esc(c.outline)}" target="_blank">View Outline</a>
+      </div>
+    `;
+  } else if (c.outline && c.outline === 'Email Course Faculties') {
+    // Generate mailto link with all faculties
+    const allEmails = c.faculties.map(f => f.email).filter(Boolean).join(',');
+    const mailtoLink = allEmails ? `mailto:${allEmails}?subject=Inquiry about ${encodeURIComponent(c.code)} - ${encodeURIComponent(c.title)}` : '#';
+    outlineMarkup = `
+      <div class="outline-box">
+        <span class="outline-text">Outline requires contacting instructors</span>
+        ${allEmails ? `
+          <a class="outline-btn" href="${mailtoLink}">Email Instructors</a>
+        ` : `<span class="info-value empty">No faculty emails available.</span>`}
+      </div>
+    `;
+  }
+
+  modalContent.innerHTML = `
+    <div class="modal-header">
+      <div class="modal-course-badge">
+        <span class="modal-course-code">${esc(c.code)}</span>
+        <span class="status-pill ${c.offered.toLowerCase()}">${esc(c.offered)}</span>
+      </div>
+      <div class="modal-course-title">${esc(c.title)}</div>
+    </div>
+    <div class="modal-body">
+      <div class="info-section">
+        <div class="info-label">Course Description</div>
+        <div class="info-value">${esc(descText)}</div>
+      </div>
+      <div class="info-section">
+        <div class="info-label">Prerequisite</div>
+        <div class="info-value"><strong>${esc(prereqText)}</strong></div>
+      </div>
+      
+      ${c.remarks ? `
+        <div class="info-section">
+          <div class="info-label">Remarks</div>
+          <div class="info-value">${esc(c.remarks)}</div>
+        </div>
+      ` : ''}
+      
+      <div class="info-section">
+        <div class="info-label">Course Outline / Action</div>
+        ${outlineMarkup}
+      </div>
+      
+      <div class="info-section">
+        <div class="info-label">Prospective Faculty Members</div>
+        ${facultyMarkup}
+      </div>
+    </div>
+  `;
+  
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Event Listeners
+document.getElementById('search-input').addEventListener('input', renderElectives);
+
+document.getElementById('tab-active').addEventListener('click', (e) => {
+  document.getElementById('tab-active').classList.add('active');
+  document.getElementById('tab-inactive').classList.remove('active');
+  currentTab = 'ACTIVE';
+  renderElectives();
+});
+
+document.getElementById('tab-inactive').addEventListener('click', (e) => {
+  document.getElementById('tab-inactive').classList.add('active');
+  document.getElementById('tab-active').classList.remove('active');
+  currentTab = 'INACTIVE';
+  renderElectives();
+});
+
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('modal').addEventListener('click', e => {
+  if(e.target === e.currentTarget) closeModal();
+});
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') closeModal();
+});
+
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// Initial Fetch
+fetchSheetData();
+
+// Sidebar Toggle Logic
+const toggleBtn = document.getElementById('sidebar-toggle');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebar-overlay');
+const body = document.body;
+
+if (toggleBtn && sidebar && overlay) {
+  toggleBtn.addEventListener('click', () => {
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      const isOpen = sidebar.classList.toggle('open');
+      toggleBtn.classList.toggle('open', isOpen);
+      overlay.classList.toggle('show', isOpen);
+    } else {
+      body.classList.toggle('sidebar-collapsed');
+    }
+  });
+  
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    toggleBtn.classList.remove('open');
+    overlay.classList.remove('show');
+  });
+
+  window.addEventListener('resize', () => {
+    const isMobile = window.innerWidth <= 768;
+    if (!isMobile) {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+    } else {
+      toggleBtn.classList.remove('open');
+    }
+  });
+}
+
+function viewFaculty(initial) {
+  window.location.href = `index.html?initial=${encodeURIComponent(initial)}`;
+}
+</script>
+</div> <!-- Close main-wrapper-layout -->
+</body>
+</html>

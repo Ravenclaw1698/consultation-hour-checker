@@ -63,8 +63,9 @@ npx serve .
 
 ```
 faculty-hours/
-└── index.html      ← Entire app (HTML + CSS + JS in one file)
-└── README.md       ← This file
+├── index.html      ← Main app (Faculty Consultation Hours)
+├── electives.html  ← Elective Course Directory (Active/Inactive)
+└── README.md       ← Documentation
 ```
 
 No dependencies. No `node_modules`. No build process.
